@@ -49,6 +49,26 @@ var Hospital = {
         })
     },
 
+    screening_data: function(hospitalPKey, dataProviderPKey, inclExclCriteria) {   //i.e Data Provider
+        return m.request({
+            method: "GET",
+            url: "/api/hospitals/screening_data/" + hospitalPKey + "?" + inclExclCriteria,
+            headers: {
+                'ClientKey': dataProviderPKey
+            }
+        })
+        .then(function(result) {
+            console.log("Get screening data")
+            Hospital.error = ""
+            Hospital.sharedDataList = result.data
+        })
+        .catch(function(e) {
+            console.log(e)
+            Hospital.error = e.message
+            Hospital.sharedDataList = []
+        })
+    },
+
     current: {},
 
     register: function() {

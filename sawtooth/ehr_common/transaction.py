@@ -5,7 +5,7 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchHeader, Batch
 from sawtooth_sdk.protobuf.transaction_pb2 import Transaction, TransactionHeader
 
 from . import helper as helper
-from .protobuf.trial_payload_pb2 import EHR, TrialTransactionPayload, Hospital, Patient, DataProvider
+from .protobuf.trial_payload_pb2 import EHR, TrialTransactionPayload, Hospital, Patient, DataProvider, Data
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -214,8 +214,47 @@ def create_data_provider(txn_signer, batch_signer, name):
 #         txn_signer=txn_signer,
 #         batch_signer=batch_signer)
 
+def add_data(txn_signer, batch_signer, uid, height, weight, a1c, fpg, ogtt, rpgt, event_time):
+    # LOGGER.debug('data: ' + str(data))
+    data_provider_pkey = txn_signer.get_public_key().as_hex()
+    # patient_pkey = client_pkey
+    # patient_hex = helper.make_patient_address(patient_pkey=client_pkey)
+    data_hex = helper.make_data_provider_data_address(data_id=uid)
+    data_data_provider_rel_hex = helper.make_data_data_provider__relation_address(uid, data_provider_pkey)
+    data_provider_data_rel_hex = helper.make_data_provider_data__relation_address(data_provider_pkey, uid)
 
-def add_ehr(txn_signer, batch_signer, uid, client_pkey, field_1, field_2):
+    # ehr_hospital_rel_hex = helper.make_ehr_hospital__relation_address(uid, hospital_pkey)
+    # hospital_ehr_rel_hex = helper.make_hospital_ehr__relation_address(hospital_pkey, uid)
+
+    # current_times_str = helper.get_current_timestamp()
+    # clinic_hex = helper.make_clinic_address(clinic_pkey=clinic_pkey)
+
+    trial = Data(
+        id=uid,
+        height=height,
+        weight=weight,
+        A1C=a1c,
+        FPG=fpg,
+        OGTT=ogtt,
+        RPGT=rpgt,
+        event_time=event_time
+    )
+
+    LOGGER.debug('trial: ' + str(trial))
+
+    payload = TrialTransactionPayload(
+        payload_type=TrialTransactionPayload.IMPORT_DATA,
+        import_data=trial)
+
+    return _make_transaction(
+        payload=payload,
+        inputs=[data_hex, data_data_provider_rel_hex, data_provider_data_rel_hex],
+        outputs=[data_hex, data_data_provider_rel_hex, data_provider_data_rel_hex],
+        txn_signer=txn_signer,
+        batch_signer=batch_signer)
+
+
+def add_ehr(txn_signer, batch_signer, uid, client_pkey, height, weight, a1c, fpg, ogtt, rpgt):
     hospital_pkey = txn_signer.get_public_key().as_hex()
     patient_pkey = client_pkey
     # patient_hex = helper.make_patient_address(patient_pkey=client_pkey)
@@ -232,8 +271,12 @@ def add_ehr(txn_signer, batch_signer, uid, client_pkey, field_1, field_2):
     ehr = EHR(
         id=uid,
         client_pkey=client_pkey,
-        field_1=field_1,
-        field_2=field_2,
+        height=height,
+        weight=weight,
+        A1C=a1c,
+        FPG=fpg,
+        OGTT=ogtt,
+        RPGT=rpgt,
         event_time=str(current_times_str)
     )
 

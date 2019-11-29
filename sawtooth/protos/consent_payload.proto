@@ -75,6 +75,9 @@ message Permission {
 
       GRANT_3RD_PARTY_ACCESS = 1000;
       REVOKE_3RD_PARTY_ACCESS = 1001;
+
+      IMPORT_DATA = 1100;
+      READ_DATA = 1101;
 //      READ_INSURANCE_COMPANY = 900;
 //      READ_OWN_INSURANCE_COMPANY = 901;
 //

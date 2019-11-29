@@ -127,6 +127,8 @@ def create_data_provider_client(txn_signer, batch_signer):
                    Permission(type=Permission.READ_OWN_DATA_PROVIDER),
                    Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA),
                    Permission(type=Permission.READ_FORMATTED_EHR),
+                   Permission(type=Permission.IMPORT_DATA),
+                   Permission(type=Permission.READ_DATA),
                    Permission(type=Permission.WRITE_FORMATTED_EHR)
                    ]
     return create_client(txn_signer, batch_signer, permissions)

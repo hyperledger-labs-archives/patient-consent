@@ -88,8 +88,36 @@ async def get_data(request, hospital_pkey):
     for address, data in data_list.items():
         data_list_json.append({
             'id': data.id,
-            'field_1': data.field_1,
-            'field_2': data.field_2,
+            'height': data.height,
+            'weight': data.weight,
+            'A1C': data.A1C,
+            'FPG': data.FPG,
+            'OGTT': data.OGTT,
+            'RPGT': data.RPGT,
+            'event_time': data.event_time
+        })
+
+    return response.json(body={'data': data_list_json},
+                         headers=general.get_response_headers())
+
+
+@HOSPITALS_BP.get('hospitals/screening_data/<hospital_pkey>')
+async def get_data(request, hospital_pkey):
+    """Updates auth information for the authorized account"""
+    data_provider_pkey = general.get_request_key_header(request)
+    data_list = await security_messaging.get_screening_data(request.app.config.VAL_CONN,
+                                                            hospital_pkey, data_provider_pkey, request.raw_args)
+
+    data_list_json = []
+    for address, data in data_list.items():
+        data_list_json.append({
+            'id': data.id,
+            'height': data.height,
+            'weight': data.weight,
+            'A1C': data.A1C,
+            'FPG': data.FPG,
+            'OGTT': data.OGTT,
+            'RPGT': data.RPGT,
             'event_time': data.event_time
         })
 

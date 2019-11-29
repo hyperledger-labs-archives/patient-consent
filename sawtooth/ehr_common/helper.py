@@ -23,6 +23,7 @@ HOSPITAL_ENTITY_CODE = '01'
 PATIENT_ENTITY_CODE = '03'
 EHR_ENTITY_CODE = '04'
 DATA_PROVIDER_ENTITY_CODE = '05'
+DATA_PROVIDER_DATA_ENTITY_CODE = '06'
 # LAB_TEST_ENTITY_CODE = '06'
 # PULSE_ENTITY_CODE = '07'
 # LAB_ENTITY_CODE = '08'
@@ -38,6 +39,9 @@ EHR_PATIENT__RELATION_CODE = "72"
 
 HOSPITAL_EHR__RELATION_CODE = "81"
 EHR_HOSPITAL__RELATION_CODE = "82"
+
+DATA_PROVIDER_DATA__RELATION_CODE = "91"
+DATA_DATA_PROVIDER__RELATION_CODE = "92"
 # permissions = {
 #     'read_clinic': '100',
 #     'read_own_clinic': '101',
@@ -107,12 +111,34 @@ def make_hospital_list_address():
     return TP_PREFFIX_HEX6 + HOSPITAL_ENTITY_CODE
 
 
+def make_data_provider_data_address(data_id):
+    return TP_PREFFIX_HEX6 + DATA_PROVIDER_DATA_ENTITY_CODE + _hash(data_id)[:62]
+
+
 def make_data_provider_address(data_provider_pkey):
     return TP_PREFFIX_HEX6 + DATA_PROVIDER_ENTITY_CODE + _hash(data_provider_pkey)[:62]
 
 
+def make_data_provider_data_list_address():
+    return TP_PREFFIX_HEX6 + DATA_PROVIDER_DATA_ENTITY_CODE
+
+
 def make_data_provider_list_address():
     return TP_PREFFIX_HEX6 + DATA_PROVIDER_ENTITY_CODE
+
+
+# Data Provider <-> Data relation
+def make_data_data_provider__relation_address(data_id, client_pkey):
+    return TP_PREFFIX_HEX6 + DATA_DATA_PROVIDER__RELATION_CODE + \
+        DATA_PROVIDER_DATA_ENTITY_CODE + _hash(data_id)[:30] + \
+        DATA_PROVIDER_ENTITY_CODE + _hash(client_pkey)[:28]
+
+
+# Data <-> DataProvider relation
+def make_data_provider_data__relation_address(client_pkey, data_id):
+    return TP_PREFFIX_HEX6 + DATA_PROVIDER_DATA__RELATION_CODE + \
+        DATA_PROVIDER_ENTITY_CODE + _hash(client_pkey)[:30] + \
+        DATA_PROVIDER_DATA_ENTITY_CODE + _hash(data_id)[:28]
 
 # def make_doctor_address(doctor_pkey):
 #     return TP_PREFFIX_HEX6 + DOCTOR_ENTITY_CODE + _hash(doctor_pkey)[:62]

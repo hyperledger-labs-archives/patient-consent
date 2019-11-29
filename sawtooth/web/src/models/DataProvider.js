@@ -88,6 +88,27 @@ var DataProvider = {
             console.log(e)
             DataProvider.error = e.message
         })
+    },
+
+    import_screening_data: function(dataList, clientKey) {
+        return m.request({
+            method: "POST",
+            url: "/api/data_providers/import_screening_data",
+            headers: {
+                'ClientKey': clientKey
+            },
+            data: dataList,
+            useBody: true,
+//            withCredentials: true,
+        })
+        .then(function(items) {
+//            Data.todos.list = items
+            DataProvider.error = ""
+        })
+        .catch(function(e) {
+            console.log(e)
+            DataProvider.error = e.message
+        })
     }
 
 }
