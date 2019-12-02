@@ -1,5 +1,5 @@
 from ehr_processor.ehr_common import helper
-from ehr_processor.ehr_common.protobuf.trial_payload_pb2 import Hospital, Patient, EHR, DataProvider
+from ehr_processor.ehr_common.protobuf.trial_payload_pb2 import Hospital, Patient, EHR, DataProvider, Data
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -72,9 +72,9 @@ class EHRState(object):
         if ehr_obj is None:
             self._store_ehr(signer=signer, ehr=ehr)
 
-    # def add_pulse(self, pulse):
-    #     self._store_pulse(pulse=pulse)
-    #
+    def import_data(self, signer, data):
+        self._store_import_data(signer=signer, data=data)
+
     # def create_claim(self, claim):
     #     self._store_claim(claim=claim)
     #
@@ -100,10 +100,10 @@ class EHRState(object):
         lab = self._load_ehr(ehr_id=ehr_id)
         return lab
 
-    # def get_claim(self, claim_id, clinic_pkey):
-    #     od = self._load_claim(claim_id=claim_id, clinic_pkey=clinic_pkey)
-    #     return od
-    #
+    def get_data(self, data_id):
+        data = self._load_data(data_id=data_id)
+        return data
+
     # def get_claim2(self, claim_id):
     #     od = self._load_claim2(claim_id=claim_id)
     #     return od
@@ -205,17 +205,16 @@ class EHRState(object):
             ehr.ParseFromString(state_entries[0].data)
         return ehr
 
-    # def _load_claim(self, claim_id, clinic_pkey):
-    #     claim = None
-    #     claim_hex = [] if clinic_pkey is None and claim_id is None \
-    #         else [helper.make_claim_address(claim_id, clinic_pkey)]
-    #     state_entries = self._context.get_state(
-    #         claim_hex,
-    #         timeout=self.TIMEOUT)
-    #     if state_entries:
-    #         claim = payload_pb2.CreateClaim()
-    #         claim.ParseFromString(state_entries[0].data)
-    #     return claim
+    def _load_data(self, data_id):
+        data = None
+        data_hex = helper.make_data_provider_data_address(data_id=data_id)
+        state_entries = self._context.get_state(
+            [data_hex],
+            timeout=self.TIMEOUT)
+        if state_entries:
+            data = Data()
+            data.ParseFromString(state_entries[0].data)
+        return data
 
     # def _load_lab_tests(self):
     #     lab_test = None
@@ -361,6 +360,32 @@ class EHRState(object):
             patient_ehr_relation_address: str.encode(ehr.id)
         }
         LOGGER.debug("_store_ehr: " + str(states))
+        self._context.set_state(
+            states,
+            timeout=self.TIMEOUT)
+
+    def _store_import_data(self, signer, data):
+        data_address = helper.make_data_provider_data_address(data_id=data.id)
+        data_data_provider_relation_address = helper.make_data_data_provider__relation_address(data.id,
+                                                                                               signer)
+        data_provider_data_relation_address = helper.make_data_provider_data__relation_address(signer,
+                                                                                               data.id)
+
+        # ehr_hospital_relation_address = helper.make_ehr_hospital__relation_address(ehr.id,
+        #                                                                            signer)
+        # hospital_ehr_relation_address = helper.make_hospital_ehr__relation_address(signer,
+        #                                                                            ehr.id)
+        import_data = data.SerializeToString()
+        states = {
+            data_address: import_data,
+
+            data_data_provider_relation_address: str.encode(signer),
+            data_provider_data_relation_address: str.encode(data.id),
+
+            # ehr_patient_relation_address: str.encode(ehr.client_pkey),
+            # patient_ehr_relation_address: str.encode(ehr.id)
+        }
+        LOGGER.debug("_store_import_data: " + str(states))
         self._context.set_state(
             states,
             timeout=self.TIMEOUT)

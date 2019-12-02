@@ -49,8 +49,8 @@ class EHRPayload(object):
     def create_ehr(self):
         return self._transaction.create_ehr
 
-    # def pulse(self):
-    #     return self._transaction.pulse
+    def import_data(self):
+        return self._transaction.import_data
 
     def is_create_hospital(self):
         return self._transaction.payload_type == TrialTransactionPayload.CREATE_HOSPITAL
@@ -64,8 +64,8 @@ class EHRPayload(object):
     def is_create_ehr(self):
         return self._transaction.payload_type == TrialTransactionPayload.CREATE_EHR
 
-    # def is_create_claim(self):
-    #     return self._transaction.payload_type == payload_pb2.TransactionPayload.CREATE_CLAIM
+    def is_import_data(self):
+        return self._transaction.payload_type == TrialTransactionPayload.IMPORT_DATA
     #
     # def is_close_claim(self):
     #     return self._transaction.payload_type == payload_pb2.TransactionPayload.CLOSE_CLAIM

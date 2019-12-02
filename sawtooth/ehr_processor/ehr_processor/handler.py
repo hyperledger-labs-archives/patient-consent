@@ -223,6 +223,9 @@ class EHRTransactionHandler(TransactionHandler):
                 #         'Invalid action: Patient does not exist: ' + signer)
 
                 state.create_ehr(signer, ehr)
+            elif payload.is_import_data():
+                data = payload.import_data()
+                state.import_data(signer, data)
             else:
                 raise InvalidTransaction('Unhandled action: {}'.format(payload.transaction_type()))
         except Exception as e:
