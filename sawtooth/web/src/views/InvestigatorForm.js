@@ -1,5 +1,5 @@
 var m = require("mithril")
-var DataProvider = require("../models/DataProvider")
+var Investigator = require("../models/Investigator")
 
 module.exports = {
 //    oninit: function(vnode) {User.load(vnode.attrs.id)},
@@ -7,16 +7,16 @@ module.exports = {
         return m("form", {
                 onsubmit: function(e) {
                     e.preventDefault()
-                    DataProvider.register()
+                    Investigator.register()
                 }
             }, [
             m("label.label", "Name"),
-            m("input.input[type=text][placeholder=Data Provider name]", {
-                oninput: m.withAttr("value", function(value) {DataProvider.current.name = value}),
-                value: DataProvider.current.name
+            m("input.input[type=text][placeholder=Investigator name]", {
+                oninput: m.withAttr("value", function(value) {Investigator.current.name = value}),
+                value: Investigator.current.name
             }),
             m("button.button[type=submit]", "Register"),
-            m("label.error", DataProvider.error)
+            m("label.error", Investigator.error)
         ])
     }
 }

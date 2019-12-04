@@ -1,13 +1,13 @@
 var m = require("mithril")
-var DataProvider = require("../models/DataProvider")
+var Investigator = require("../models/Investigator")
 
 module.exports = {
     oninit:
         function(vnode){
-            DataProvider.loadTrialDataList(vnode.attrs.client_key)
+            Investigator.loadTrialDataList(vnode.attrs.client_key)
         },
     view: function(vnode) {
-        return m(".user-list", DataProvider.trialDataList.map(function(data) {
+        return m(".user-list", Investigator.trialDataList.map(function(data) {
             return m("a.user-list-item", // {href: "/claim/" + claim.clinic_pkey + "/" + claim.claim_id, oncreate: m.route.link},
                 "ID: " + data.id +
                 "; Height: " + data.height +
@@ -22,63 +22,63 @@ module.exports = {
                 m("div"),
                 m("button", {
                     onclick: function() {
-                        DataProvider.trialData.id = data.id
-                        DataProvider.trialData.height?DataProvider.trialData.height:data.height
-                        DataProvider.trialData.weight?DataProvider.trialData.weight:data.weight
-                        DataProvider.trialData.A1C?DataProvider.trialData.A1C:data.A1C
-                        DataProvider.trialData.FPG?DataProvider.trialData.FPG:data.FPG
-                        DataProvider.trialData.OGTT?DataProvider.trialData.OGTT:data.OGTT
-                        DataProvider.trialData.RPGT?DataProvider.trialData.RPGT:data.RPGT
-                        DataProvider.update_trial_data(vnode.attrs.client_key)
+                        Investigator.trialData.id = data.id
+                        Investigator.trialData.height?Investigator.trialData.height:data.height
+                        Investigator.trialData.weight?Investigator.trialData.weight:data.weight
+                        Investigator.trialData.A1C?Investigator.trialData.A1C:data.A1C
+                        Investigator.trialData.FPG?Investigator.trialData.FPG:data.FPG
+                        Investigator.trialData.OGTT?Investigator.trialData.OGTT:data.OGTT
+                        Investigator.trialData.RPGT?Investigator.trialData.RPGT:data.RPGT
+                        Investigator.update_trial_data(vnode.attrs.client_key)
                     }
                 }, 'Update trial data item'),
                 m("div"),
                 m("button", {
                     onclick: function() {
-                        DataProvider.trialData.id = data.id
-                        DataProvider.trialData.eligible = true
-                        DataProvider.set_eligible(vnode.attrs.client_key)
+                        Investigator.trialData.id = data.id
+                        Investigator.trialData.eligible = true
+                        Investigator.set_eligible(vnode.attrs.client_key)
                     }
                 }, 'Set eligible'),
                 m("button", {
                     onclick: function() {
-                        DataProvider.trialData.id = data.id
-                        DataProvider.trialData.eligible = false
-                        DataProvider.set_eligible(vnode.attrs.client_key)
+                        Investigator.trialData.id = data.id
+                        Investigator.trialData.eligible = false
+                        Investigator.set_eligible(vnode.attrs.client_key)
                     }
                 }, 'Set not eligible')
             )
         }),
         m("label.label", "Height"),
         m("input.input[placeholder=Height]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.height = value}),
-            value: DataProvider.trialData.height
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.height = value}),
+            value: Investigator.trialData.height
         }),
         m("label.label", "Weight"),
         m("input.input[placeholder=Weight]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.weight = value}),
-            value: DataProvider.trialData.weight
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.weight = value}),
+            value: Investigator.trialData.weight
         }),
         m("label.label", "A1C"),
         m("input.input[placeholder=A1C]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.A1C = value}),
-            value: DataProvider.trialData.A1C
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.A1C = value}),
+            value: Investigator.trialData.A1C
         }),
         m("label.label", "FPG"),
         m("input.input[placeholder=FPG]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.FPG = value}),
-            value: DataProvider.trialData.FPG
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.FPG = value}),
+            value: Investigator.trialData.FPG
         }),
         m("label.label", "OGTT"),
         m("input.input[placeholder=OGTT]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.OGTT = value}),
-            value: DataProvider.trialData.OGTT
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.OGTT = value}),
+            value: Investigator.trialData.OGTT
         }),
         m("label.label", "RPGT"),
         m("input.input[placeholder=RPGT]", {
-            oninput: m.withAttr("value", function(value) {DataProvider.trialData.RPGT = value}),
-            value: DataProvider.trialData.RPGT
+            oninput: m.withAttr("value", function(value) {Investigator.trialData.RPGT = value}),
+            value: Investigator.trialData.RPGT
         }),
-        m("label.error", DataProvider.error))
+        m("label.error", Investigator.error))
     }
 }

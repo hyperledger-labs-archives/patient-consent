@@ -22,13 +22,13 @@ from rest_api.consent_common import transaction as consent_transaction
 from rest_api import general, security_messaging
 from rest_api.errors import ApiBadRequest, ApiInternalError
 
-DATA_PROVIDERS_BP = Blueprint('data_providers')
+INVESTIGATORS_BP = Blueprint('investigators')
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@DATA_PROVIDERS_BP.get('data_providers')
+@INVESTIGATORS_BP.get('investigators')
 async def get_all_data_providers(request):
     """Fetches complete details of all Accounts in state"""
     client_key = general.get_request_key_header(request)
@@ -44,7 +44,7 @@ async def get_all_data_providers(request):
                          headers=general.get_response_headers())
 
 
-@DATA_PROVIDERS_BP.post('data_providers')
+@INVESTIGATORS_BP.post('investigators')
 async def register_data_provider(request):
     """Updates auth information for the authorized account"""
     required_fields = ['name']
@@ -82,7 +82,7 @@ async def register_data_provider(request):
                          headers=general.get_response_headers())
 
 
-@DATA_PROVIDERS_BP.post('data_providers/import_screening_data')
+@INVESTIGATORS_BP.post('investigators/import_screening_data')
 async def import_screening_data(request):
     """Updates auth information for the authorized account"""
     data_provider_key = general.get_request_key_header(request)
@@ -123,7 +123,7 @@ async def import_screening_data(request):
                          headers=general.get_response_headers())
 
 
-@DATA_PROVIDERS_BP.get('data_providers/data')
+@INVESTIGATORS_BP.get('investigators/data')
 async def get_all_data_from_data_providers(request):
     """Fetches complete details of all Accounts in state"""
     client_key = general.get_request_key_header(request)
@@ -146,7 +146,7 @@ async def get_all_data_from_data_providers(request):
                          headers=general.get_response_headers())
 
 
-@DATA_PROVIDERS_BP.post('data_providers/data/update')
+@INVESTIGATORS_BP.post('investigators/data/update')
 async def update_data(request):
     client_key = general.get_request_key_header(request)
     required_fields = ['id', 'height', 'weight', 'A1C', 'FPG', 'OGTT', 'RPGT']
@@ -192,7 +192,7 @@ async def update_data(request):
                          headers=general.get_response_headers())
 
 
-@DATA_PROVIDERS_BP.post('data_providers/data/eligible')
+@INVESTIGATORS_BP.post('investigators/data/eligible')
 async def set_eligible(request):
     client_key = general.get_request_key_header(request)
     required_fields = ['id', 'eligible']

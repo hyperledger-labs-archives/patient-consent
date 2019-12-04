@@ -14,8 +14,8 @@ var PatientForm = require("./views/PatientForm")
 var HospitalList = require("./views/HospitalList")
 var HospitalForm = require("./views/HospitalForm")
 
-var DataProviderList = require("./views/DataProviderList")
-var DataProviderForm = require("./views/DataProviderForm")
+var InvestigatorList = require("./views/InvestigatorList")
+var InvestigatorForm = require("./views/InvestigatorForm")
 var TrialDataList = require("./views/TrialDataList")
 
 var EHRList = require("./views/EHRList")
@@ -47,7 +47,7 @@ var EHRNewForm = require("./views/EHRNewForm")
 var HospitalActionsList = require("./views/HospitalActionsList")
 var PatientActionsList = require("./views/PatientActionsList")
 //var LabActionsList = require("./views/LabActionsList")
-var DataProviderActionsList = require("./views/DataProviderActionsList")
+var InvestigatorActionsList = require("./views/InvestigatorActionsList")
 var Layout = require("./views/Layout")
 
 m.route(document.body, "/hospital", {
@@ -88,14 +88,14 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(HospitalForm))
         }
     },
-    "/data_provider_list/": {
+    "/investigator_list/": {
         render: function(vnode) {
-            return m(Layout, m(DataProviderList, vnode.attrs))
+            return m(Layout, m(InvestigatorList, vnode.attrs))
         }
     },
-    "/data_provider/new/": {
+    "/investigator/new/": {
         render: function() {
-            return m(Layout, m(DataProviderForm))
+            return m(Layout, m(InvestigatorForm))
         }
     },
     "/ehr_list": {
@@ -203,9 +203,9 @@ m.route(document.body, "/hospital", {
 //            return m(Layout, m(LabActionsList))
 //        }
 //    },
-    "/data_provider": {
+    "/investigator": {
         render: function() {
-            return m(Layout, m(DataProviderActionsList))
+            return m(Layout, m(InvestigatorActionsList))
         }
     },
 //    "/lab_list/": {

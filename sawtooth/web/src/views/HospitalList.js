@@ -1,6 +1,6 @@
 var m = require("mithril")
 var Hospital = require("../models/Hospital")
-var DataProvider = require("../models/DataProvider")
+var Investigator = require("../models/Investigator")
 
 var qrcodeurl = ''
 
@@ -92,7 +92,7 @@ module.exports = {
             m("div"),
             m("button", {
                 onclick: function() {
-                    DataProvider.import_screening_data(Hospital.sharedDataList, vnode.attrs.client_key)
+                    Investigator.import_screening_data(Hospital.sharedDataList, vnode.attrs.client_key)
                 }
             }, 'Import Screening Data'),
             m("div"),

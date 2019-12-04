@@ -1,13 +1,13 @@
 var m = require("mithril")
 
-var DataProvider = {
+var Investigator = {
     list: [],
     trialDataList: [],
     error: "",
     loadList: function(clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/data_providers",
+            url: "/api/investigators",
             headers: {
                 'ClientKey': clientKey
             }
@@ -18,21 +18,21 @@ var DataProvider = {
 //            credentials: 'include',
         })
         .then(function(result) {
-            console.log("Get data provider list")
-            DataProvider.error = ""
-            DataProvider.list = result.data
+            console.log("Get investigator list")
+            Investigator.error = ""
+            Investigator.list = result.data
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
-            DataProvider.list = []
+            Investigator.error = e.message
+            Investigator.list = []
         })
     },
 
     loadTrialDataList: function(clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/data_providers/data",
+            url: "/api/investigators/data",
             headers: {
                 'ClientKey': clientKey
             }
@@ -44,13 +44,13 @@ var DataProvider = {
         })
         .then(function(result) {
             console.log("Get trial data list")
-            DataProvider.error = ""
-            DataProvider.trialDataList = result.data
+            Investigator.error = ""
+            Investigator.trialDataList = result.data
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
-            DataProvider.trialDataList = []
+            Investigator.error = e.message
+            Investigator.trialDataList = []
         })
     },
 
@@ -61,25 +61,25 @@ var DataProvider = {
     register: function() {
         return m.request({
             method: "POST",
-            url: "/api/data_providers",
-            data: DataProvider.current,
+            url: "/api/investigators",
+            data: Investigator.current,
             useBody: true,
 //            withCredentials: true,
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     },
 
-    grant_access_to_share_data: function(dataProviderPKey, clientKey) {
+    grant_access_to_share_data: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/grant_access_to_share_data/" + dataProviderPKey,
+            url: "/api/hospitals/grant_access_to_share_data/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }
@@ -89,18 +89,18 @@ var DataProvider = {
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     },
 
-    revoke_access_to_share_data: function(dataProviderPKey, clientKey) {
+    revoke_access_to_share_data: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/revoke_access_to_share_data/" + dataProviderPKey,
+            url: "/api/hospitals/revoke_access_to_share_data/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }
@@ -110,18 +110,18 @@ var DataProvider = {
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     },
 
     import_screening_data: function(dataList, clientKey) {
         return m.request({
             method: "POST",
-            url: "/api/data_providers/import_screening_data",
+            url: "/api/investigators/import_screening_data",
             headers: {
                 'ClientKey': clientKey
             },
@@ -131,56 +131,56 @@ var DataProvider = {
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     },
 
     update_trial_data: function(clientKey) {
         return m.request({
             method: "POST",
-            url: "/api/data_providers/data/update",
+            url: "/api/investigators/data/update",
             headers: {
                 'ClientKey': clientKey
             },
-            data: DataProvider.trialData,
+            data: Investigator.trialData,
             useBody: true,
 //            withCredentials: true,
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     },
 
     set_eligible: function(clientKey) {
         return m.request({
             method: "POST",
-            url: "/api/data_providers/data/eligible",
+            url: "/api/investigators/data/eligible",
             headers: {
                 'ClientKey': clientKey
             },
-            data: DataProvider.trialData,
+            data: Investigator.trialData,
             useBody: true,
 //            withCredentials: true,
         })
         .then(function(items) {
 //            Data.todos.list = items
-            DataProvider.error = ""
+            Investigator.error = ""
         })
         .catch(function(e) {
             console.log(e)
-            DataProvider.error = e.message
+            Investigator.error = e.message
         })
     }
 
 }
 
-module.exports = DataProvider
+module.exports = Investigator
