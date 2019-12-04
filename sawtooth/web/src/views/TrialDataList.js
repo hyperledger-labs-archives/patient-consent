@@ -17,6 +17,7 @@ module.exports = {
                 "; OGTT: " + data.OGTT +
                 "; RPGT: " + data.RPGT +
                 "; TIMESTAMP: " + data.event_time +
+                "; IS ELIGIBLE?: " + data.eligible +
                 ";",
                 m("div"),
                 m("button", {
@@ -34,9 +35,18 @@ module.exports = {
                 m("div"),
                 m("button", {
                     onclick: function() {
-//                        DataProvider.setEligible(vnode.attrs.client_key, id, status)
+                        DataProvider.trialData.id = data.id
+                        DataProvider.trialData.eligible = true
+                        DataProvider.set_eligible(vnode.attrs.client_key)
                     }
-                }, 'Set eligible status')
+                }, 'Set eligible'),
+                m("button", {
+                    onclick: function() {
+                        DataProvider.trialData.id = data.id
+                        DataProvider.trialData.eligible = false
+                        DataProvider.set_eligible(vnode.attrs.client_key)
+                    }
+                }, 'Set not eligible')
             )
         }),
         m("label.label", "Height"),

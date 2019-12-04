@@ -12,7 +12,7 @@ message TrialTransactionPayload {
         CREATE_DATA_PROVIDER = 6;
         IMPORT_DATA = 7;
         UPDATE_DATA = 8;
-//        EAT_PILLS = 9;
+        SET_ELIGIBLE = 9;
 //        NEXT_VISIT = 10;
 //        ADD_LAB_TEST = 11;
 //        ADD_PULSE = 12;
@@ -31,6 +31,7 @@ message TrialTransactionPayload {
     Investigator create_investigator = 7;
     Data import_data = 8;
     Data update_data = 9;
+    Data set_eligible = 10;
 //    Claim create_claim = 5;
 //    ActionOnClaim assign_doctor = 6;
 //    ActionOnClaim first_visit = 7;
@@ -95,7 +96,8 @@ message Data {
     string FPG=5;
     string OGTT=6;
     string RPGT=7;
-    string event_time=8;
+    bool eligible=8;
+    string event_time=9;
 }
 
 message Sponsor { //  Study management

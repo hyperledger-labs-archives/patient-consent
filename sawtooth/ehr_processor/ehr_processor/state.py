@@ -75,14 +75,18 @@ class EHRState(object):
     def import_data(self, signer, data):
         self._store_import_data(signer=signer, data=data)
 
-    def update_data(self, signer, data):
+    def update_data(self, data):
         data_obj = self._load_data(data.id)
         if data_obj is not None:
             data.event_time = data_obj.event_time
-            self._store_update_data(signer=signer, data=data)
-    #
-    # def update_claim(self, claim):
-    #     self._update_claim(claim=claim)
+            self._store_update_data(data=data)
+
+    def set_eligible(self, data):
+        data_obj = self._load_data(data.id)
+        if data_obj is not None:
+            data_obj.eligible = data.eligible
+            self._store_update_data(data=data_obj)
+
     #
     # def close_claim(self, claim):
     #     self._close_claim(claim=claim)
@@ -393,7 +397,7 @@ class EHRState(object):
             states,
             timeout=self.TIMEOUT)
 
-    def _store_update_data(self, signer, data):
+    def _store_update_data(self, data):
         data_address = helper.make_data_provider_data_address(data_id=data.id)
         # data_data_provider_relation_address = helper.make_data_data_provider__relation_address(data.id,
         #                                                                                        signer)

@@ -226,9 +226,12 @@ class EHRTransactionHandler(TransactionHandler):
             elif payload.is_import_data():
                 data = payload.import_data()
                 state.import_data(signer, data)
+            elif payload.is_set_eligible():
+                data = payload.set_eligible()
+                state.set_eligible(data)
             elif payload.is_update_data():
                 data = payload.update_data()
-                state.update_data(signer, data)
+                state.update_data(data)
 
             else:
                 raise InvalidTransaction('Unhandled action: {}'.format(payload.transaction_type()))

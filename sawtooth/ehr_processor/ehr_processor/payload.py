@@ -40,9 +40,9 @@ class EHRPayload(object):
     # def attend_procedures(self):
     #     return self._transaction.attend_procedures
     #
-    # def eat_pills(self):
-    #     return self._transaction.eat_pills
-    #
+    def set_eligible(self):
+        return self._transaction.set_eligible
+
     def update_data(self):
         return self._transaction.update_data
 
@@ -69,9 +69,9 @@ class EHRPayload(object):
 
     def is_update_data(self):
         return self._transaction.payload_type == TrialTransactionPayload.UPDATE_DATA
-    #
-    # def is_update_claim(self):
-    #     return self._transaction.payload_type == payload_pb2.TransactionPayload.UPDATE_CLAIM
+
+    def is_set_eligible(self):
+        return self._transaction.payload_type == TrialTransactionPayload.SET_ELIGIBLE
     #
     # def is_assign_doctor(self):
     #     return self._transaction.payload_type == payload_pb2.TransactionPayload.ASSIGN_DOCTOR

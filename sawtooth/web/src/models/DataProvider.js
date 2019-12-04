@@ -158,6 +158,27 @@ var DataProvider = {
             console.log(e)
             DataProvider.error = e.message
         })
+    },
+
+    set_eligible: function(clientKey) {
+        return m.request({
+            method: "POST",
+            url: "/api/data_providers/data/eligible",
+            headers: {
+                'ClientKey': clientKey
+            },
+            data: DataProvider.trialData,
+            useBody: true,
+//            withCredentials: true,
+        })
+        .then(function(items) {
+//            Data.todos.list = items
+            DataProvider.error = ""
+        })
+        .catch(function(e) {
+            console.log(e)
+            DataProvider.error = e.message
+        })
     }
 
 }

@@ -790,3 +790,14 @@ async def update_data_provider(conn, timeout, batches, client_key):
     else:
         LOGGER.debug('has permission: False')
     raise ApiForbidden("Insufficient permission")
+
+
+async def set_eligible(conn, timeout, batches, client_key):
+    client = await get_client(conn, client_key)
+    if Permission(type=Permission.UPDATE_DATA) in client.permissions:
+        LOGGER.debug('has UPDATE_DATA permission: True')
+        await _send(conn, timeout, batches)
+        return
+    else:
+        LOGGER.debug('has permission: False')
+    raise ApiForbidden("Insufficient permission")
