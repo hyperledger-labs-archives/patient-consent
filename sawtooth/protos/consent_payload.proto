@@ -78,6 +78,7 @@ message Permission {
 
       IMPORT_DATA = 1100;
       READ_DATA = 1101;
+      UPDATE_DATA = 1102;
 //      READ_INSURANCE_COMPANY = 900;
 //      READ_OWN_INSURANCE_COMPANY = 901;
 //

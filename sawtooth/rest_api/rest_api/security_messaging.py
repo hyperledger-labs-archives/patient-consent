@@ -621,6 +621,7 @@ async def get_data_from_data_providers(conn, client_key):
             data.ParseFromString(entity.data)
             data_list[entity.address] = data
             LOGGER.debug('data: ' + str(data))
+        return data_list
     else:
         LOGGER.debug('no READ_DATA permissions')
     raise ApiForbidden("Insufficient permission")
@@ -773,6 +774,17 @@ async def import_screening_data(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
     if Permission(type=Permission.IMPORT_DATA) in client.permissions:
         LOGGER.debug('has IMPORT_DATA permission: True')
+        await _send(conn, timeout, batches)
+        return
+    else:
+        LOGGER.debug('has permission: False')
+    raise ApiForbidden("Insufficient permission")
+
+
+async def update_data_provider(conn, timeout, batches, client_key):
+    client = await get_client(conn, client_key)
+    if Permission(type=Permission.UPDATE_DATA) in client.permissions:
+        LOGGER.debug('has UPDATE_DATA permission: True')
         await _send(conn, timeout, batches)
         return
     else:

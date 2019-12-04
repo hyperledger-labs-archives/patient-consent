@@ -75,8 +75,11 @@ class EHRState(object):
     def import_data(self, signer, data):
         self._store_import_data(signer=signer, data=data)
 
-    # def create_claim(self, claim):
-    #     self._store_claim(claim=claim)
+    def update_data(self, signer, data):
+        data_obj = self._load_data(data.id)
+        if data_obj is not None:
+            data.event_time = data_obj.event_time
+            self._store_update_data(signer=signer, data=data)
     #
     # def update_claim(self, claim):
     #     self._update_claim(claim=claim)
@@ -386,6 +389,25 @@ class EHRState(object):
             # patient_ehr_relation_address: str.encode(ehr.id)
         }
         LOGGER.debug("_store_import_data: " + str(states))
+        self._context.set_state(
+            states,
+            timeout=self.TIMEOUT)
+
+    def _store_update_data(self, signer, data):
+        data_address = helper.make_data_provider_data_address(data_id=data.id)
+        # data_data_provider_relation_address = helper.make_data_data_provider__relation_address(data.id,
+        #                                                                                        signer)
+        # data_provider_data_relation_address = helper.make_data_provider_data__relation_address(signer,
+        #                                                                                        data.id)
+
+        update_data = data.SerializeToString()
+        states = {
+            data_address: update_data,
+
+            # data_data_provider_relation_address: str.encode(signer),
+            # data_provider_data_relation_address: str.encode(data.id),
+        }
+        LOGGER.debug("_store_update_data: " + str(states))
         self._context.set_state(
             states,
             timeout=self.TIMEOUT)

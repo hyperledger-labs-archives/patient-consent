@@ -16,6 +16,7 @@ var HospitalForm = require("./views/HospitalForm")
 
 var DataProviderList = require("./views/DataProviderList")
 var DataProviderForm = require("./views/DataProviderForm")
+var TrialDataList = require("./views/TrialDataList")
 
 var EHRList = require("./views/EHRList")
 var EHRNewForm = require("./views/EHRNewForm")
@@ -102,11 +103,11 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(EHRList, vnode.attrs))
         }
     },
-//    "/doctor/assign/": {
-//        render: function() {
-//            return m(Layout, m(DoctorAssignForm))
-//        }
-//    },
+    "/trial_data_list": {
+        render: function(vnode) {
+            return m(Layout, m(TrialDataList, vnode.attrs))
+        }
+    },
 //    "/first_visit/": {
 //        render: function() {
 //            return m(Layout, m(FirstVisitForm))

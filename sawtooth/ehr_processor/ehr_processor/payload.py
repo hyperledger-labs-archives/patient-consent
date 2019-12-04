@@ -43,8 +43,8 @@ class EHRPayload(object):
     # def eat_pills(self):
     #     return self._transaction.eat_pills
     #
-    # def next_visit(self):
-    #     return self._transaction.next_visit
+    def update_data(self):
+        return self._transaction.update_data
 
     def create_ehr(self):
         return self._transaction.create_ehr
@@ -66,9 +66,9 @@ class EHRPayload(object):
 
     def is_import_data(self):
         return self._transaction.payload_type == TrialTransactionPayload.IMPORT_DATA
-    #
-    # def is_close_claim(self):
-    #     return self._transaction.payload_type == payload_pb2.TransactionPayload.CLOSE_CLAIM
+
+    def is_update_data(self):
+        return self._transaction.payload_type == TrialTransactionPayload.UPDATE_DATA
     #
     # def is_update_claim(self):
     #     return self._transaction.payload_type == payload_pb2.TransactionPayload.UPDATE_CLAIM
