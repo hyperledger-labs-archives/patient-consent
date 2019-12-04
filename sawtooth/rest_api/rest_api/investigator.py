@@ -29,43 +29,43 @@ LOGGER = logging.getLogger(__name__)
 
 
 @INVESTIGATORS_BP.get('investigators')
-async def get_all_data_providers(request):
+async def get_all_investigators(request):
     """Fetches complete details of all Accounts in state"""
     client_key = general.get_request_key_header(request)
-    data_provider_list = await security_messaging.get_data_providers(request.app.config.VAL_CONN, client_key)
+    investigator_list = await security_messaging.get_investigators(request.app.config.VAL_CONN, client_key)
 
-    data_provider_list_json = []
-    for address, dp in data_provider_list.items():
-        data_provider_list_json.append({
+    investigator_list_json = []
+    for address, dp in investigator_list.items():
+        investigator_list_json.append({
             'public_key': dp.public_key,
             'name': dp.name
         })
-    return response.json(body={'data': data_provider_list_json},
+    return response.json(body={'data': investigator_list_json},
                          headers=general.get_response_headers())
 
 
 @INVESTIGATORS_BP.post('investigators')
-async def register_data_provider(request):
+async def register_investigator(request):
     """Updates auth information for the authorized account"""
     required_fields = ['name']
     general.validate_fields(required_fields, request.json)
 
     name = request.json.get('name')
 
-    clinic_signer = request.app.config.SIGNER_DATAPROVIDER  # .get_public_key().as_hex()
+    clinic_signer = request.app.config.SIGNER_INVESTIGATOR  # .get_public_key().as_hex()
 
-    client_txn = consent_transaction.create_data_provider_client(
+    client_txn = consent_transaction.create_investigator_client(
         txn_signer=clinic_signer,
         batch_signer=clinic_signer
     )
-    clinic_txn = ehr_transaction.create_data_provider(
+    clinic_txn = ehr_transaction.create_investigator(
         txn_signer=clinic_signer,
         batch_signer=clinic_signer,
         name=name
     )
     batch, batch_id = ehr_transaction.make_batch_and_id([client_txn, clinic_txn], clinic_signer)
 
-    await security_messaging.add_data_provider(
+    await security_messaging.add_investigator(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
         [batch])
@@ -85,8 +85,8 @@ async def register_data_provider(request):
 @INVESTIGATORS_BP.post('investigators/import_screening_data')
 async def import_screening_data(request):
     """Updates auth information for the authorized account"""
-    data_provider_key = general.get_request_key_header(request)
-    client_signer = general.get_signer(request, data_provider_key)
+    investigator_key = general.get_request_key_header(request)
+    client_signer = general.get_signer(request, investigator_key)
     LOGGER.debug('request.json: ' + str(request.json))
     data_list = request.json
     data_txns = []
@@ -109,7 +109,7 @@ async def import_screening_data(request):
     await security_messaging.import_screening_data(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
-        [batch], data_provider_key)
+        [batch], investigator_key)
 
     try:
         await security_messaging.check_batch_status(
@@ -124,10 +124,10 @@ async def import_screening_data(request):
 
 
 @INVESTIGATORS_BP.get('investigators/data')
-async def get_all_data_from_data_providers(request):
+async def get_all_data_from_investigators(request):
     """Fetches complete details of all Accounts in state"""
     client_key = general.get_request_key_header(request)
-    data_list = await security_messaging.get_data_from_data_providers(request.app.config.VAL_CONN, client_key)
+    data_list = await security_messaging.get_data_from_investigators(request.app.config.VAL_CONN, client_key)
 
     data_list_json = []
     for address, data in data_list.items():
@@ -160,7 +160,7 @@ async def update_data(request):
     OGTT = request.json.get('OGTT')
     RPGT = request.json.get('RPGT')
 
-    client_signer = request.app.config.SIGNER_DATAPROVIDER  # .get_public_key().as_hex()
+    client_signer = request.app.config.SIGNER_INVESTIGATOR  # .get_public_key().as_hex()
 
     client_txn = ehr_transaction.update_data(
         txn_signer=client_signer,
@@ -175,7 +175,7 @@ async def update_data(request):
 
     batch, batch_id = ehr_transaction.make_batch_and_id([client_txn], client_signer)
 
-    await security_messaging.update_data_provider(
+    await security_messaging.update_investigator(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
         [batch], client_key)
@@ -201,7 +201,7 @@ async def set_eligible(request):
     uid = request.json.get('id')
     eligible = bool(request.json.get('eligible'))
 
-    client_signer = request.app.config.SIGNER_DATAPROVIDER  # .get_public_key().as_hex()
+    client_signer = request.app.config.SIGNER_INVESTIGATOR  # .get_public_key().as_hex()
 
     client_txn = ehr_transaction.set_eligible(
         txn_signer=client_signer,

@@ -1,5 +1,5 @@
 from ehr_processor.ehr_common import helper
-from ehr_processor.ehr_common.protobuf.trial_payload_pb2 import Hospital, Patient, EHR, DataProvider, Data
+from ehr_processor.ehr_common.protobuf.trial_payload_pb2 import Hospital, Patient, EHR, Investigator, Data
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -24,11 +24,11 @@ class EHRState(object):
         if hp is None:
             self._store_hospital(hospital)
 
-    def create_data_provider(self, provider):
-        dp = self._load_data_provider(public_key=provider.public_key)
+    def create_investigator(self, investigator):
+        dp = self._load_investigator(public_key=investigator.public_key)
 
         if dp is None:
-            self._store_data_provider(provider)
+            self._store_investigator(investigator)
 
     def create_patient(self, patient):
         pat = self._load_patient(public_key=patient.public_key)
@@ -95,9 +95,9 @@ class EHRState(object):
         hospital = self._load_hospital(public_key=public_key)
         return hospital
 
-    def get_data_provider(self, public_key):
-        provider = self._load_data_provider(public_key=public_key)
-        return provider
+    def get_investigator(self, public_key):
+        investigator = self._load_investigator(public_key=public_key)
+        return investigator
 
     def get_patient(self, public_key):
         patient = self._load_patient(public_key=public_key)
@@ -158,16 +158,16 @@ class EHRState(object):
             hospital.ParseFromString(state_entries[0].data)
         return hospital
 
-    def _load_data_provider(self, public_key):
-        provider = None
-        provider_hex = helper.make_data_provider_address(public_key)
+    def _load_investigator(self, public_key):
+        investigator = None
+        investigator_hex = helper.make_investigator_address(public_key)
         state_entries = self._context.get_state(
-            [provider_hex],
+            [investigator_hex],
             timeout=self.TIMEOUT)
         if state_entries:
-            provider = DataProvider()
-            provider.ParseFromString(state_entries[0].data)
-        return provider
+            investigator = Investigator()
+            investigator.ParseFromString(state_entries[0].data)
+        return investigator
 
     # def _load_lab(self, public_key):
     #     lab = None
@@ -214,7 +214,7 @@ class EHRState(object):
 
     def _load_data(self, data_id):
         data = None
-        data_hex = helper.make_data_provider_data_address(data_id=data_id)
+        data_hex = helper.make_investigator_data_address(data_id=data_id)
         state_entries = self._context.get_state(
             [data_hex],
             timeout=self.TIMEOUT)
@@ -256,8 +256,8 @@ class EHRState(object):
             {address: state_data},
             timeout=self.TIMEOUT)
 
-    def _store_data_provider(self, provider):
-        address = helper.make_data_provider_address(provider.public_key)
+    def _store_investigator(self, provider):
+        address = helper.make_investigator_address(provider.public_key)
 
         state_data = provider.SerializeToString()
         self._context.set_state(
@@ -372,11 +372,11 @@ class EHRState(object):
             timeout=self.TIMEOUT)
 
     def _store_import_data(self, signer, data):
-        data_address = helper.make_data_provider_data_address(data_id=data.id)
-        data_data_provider_relation_address = helper.make_data_data_provider__relation_address(data.id,
-                                                                                               signer)
-        data_provider_data_relation_address = helper.make_data_provider_data__relation_address(signer,
-                                                                                               data.id)
+        data_address = helper.make_investigator_data_address(data_id=data.id)
+        data_investigator_relation_address = helper.make_data_investigator__relation_address(data.id,
+                                                                                             signer)
+        investigator_data_relation_address = helper.make_investigator_data__relation_address(signer,
+                                                                                             data.id)
 
         # ehr_hospital_relation_address = helper.make_ehr_hospital__relation_address(ehr.id,
         #                                                                            signer)
@@ -386,8 +386,8 @@ class EHRState(object):
         states = {
             data_address: import_data,
 
-            data_data_provider_relation_address: str.encode(signer),
-            data_provider_data_relation_address: str.encode(data.id),
+            data_investigator_relation_address: str.encode(signer),
+            investigator_data_relation_address: str.encode(data.id),
 
             # ehr_patient_relation_address: str.encode(ehr.client_pkey),
             # patient_ehr_relation_address: str.encode(ehr.id)
@@ -398,7 +398,7 @@ class EHRState(object):
             timeout=self.TIMEOUT)
 
     def _store_update_data(self, data):
-        data_address = helper.make_data_provider_data_address(data_id=data.id)
+        data_address = helper.make_investigator_data_address(data_id=data.id)
         # data_data_provider_relation_address = helper.make_data_data_provider__relation_address(data.id,
         #                                                                                        signer)
         # data_provider_data_relation_address = helper.make_data_provider_data__relation_address(signer,
