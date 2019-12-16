@@ -13,8 +13,12 @@ module.exports = {
                 "; SURNAME: " + ehr.surname +
                 "; ID: " + ehr.id +
                 "; CLIENT PKEY: " + ehr.client_pkey +
-                "; FIELD 1: " + ehr.field_1 +
-                "; FIELD 2: " + ehr.field_2 +
+                "; Height: " + ehr.height +
+                "; Weight: " + ehr.weight +
+                "; A1C: " + ehr.A1C +
+                "; FPG: " + ehr.FPG +
+                "; OGTT: " + ehr.OGTT +
+                "; RPGT: " + ehr.RPGT +
                 "; TIMESTAMP: " + ehr.event_time +
                 ";"
 //                ,

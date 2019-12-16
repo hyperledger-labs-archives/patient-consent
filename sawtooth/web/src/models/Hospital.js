@@ -29,16 +29,36 @@ var Hospital = {
         })
     },
 
-    get_shared_data: function(hospitalPKey, dataProviderPKey) {   //i.e Data Provider
+    get_shared_data: function(hospitalPKey, investigatorPKey) {   //i.e Investigator
         return m.request({
             method: "GET",
             url: "/api/hospitals/get_shared_data/" + hospitalPKey,
             headers: {
-                'ClientKey': dataProviderPKey
+                'ClientKey': investigatorPKey
             }
         })
         .then(function(result) {
             console.log("Get shared data")
+            Hospital.error = ""
+            Hospital.sharedDataList = result.data
+        })
+        .catch(function(e) {
+            console.log(e)
+            Hospital.error = e.message
+            Hospital.sharedDataList = []
+        })
+    },
+
+    screening_data: function(hospitalPKey, investigatorPKey, inclExclCriteria) {   //i.e Investigator
+        return m.request({
+            method: "GET",
+            url: "/api/hospitals/screening_data/" + hospitalPKey + "?" + inclExclCriteria,
+            headers: {
+                'ClientKey': investigatorPKey
+            }
+        })
+        .then(function(result) {
+            console.log("Get screening data")
             Hospital.error = ""
             Hospital.sharedDataList = result.data
         })

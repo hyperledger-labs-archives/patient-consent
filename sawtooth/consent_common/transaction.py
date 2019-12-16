@@ -99,7 +99,7 @@ def create_hospital_client(txn_signer, batch_signer):
                    Permission(type=Permission.READ_OWN_HOSPITAL),
                    Permission(type=Permission.READ_EHR),
                    Permission(type=Permission.READ_OWN_EHR),
-                   Permission(type=Permission.READ_DATA_PROVIDER),
+                   Permission(type=Permission.READ_INVESTIGATOR),
                    Permission(type=Permission.GRANT_TRANSFER_SHARED_EHR_ACCESS),
                    Permission(type=Permission.REVOKE_TRANSFER_SHARED_EHR_ACCESS),
                    Permission(type=Permission.WRITE_EHR)
@@ -122,11 +122,14 @@ def create_patient_client(txn_signer, batch_signer):
     return create_client(txn_signer, batch_signer, permissions)
 
 
-def create_data_provider_client(txn_signer, batch_signer):
+def create_investigator_client(txn_signer, batch_signer):
     permissions = [Permission(type=Permission.READ_HOSPITAL),
-                   Permission(type=Permission.READ_OWN_DATA_PROVIDER),
+                   Permission(type=Permission.READ_OWN_INVESTIGATOR),
                    Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA),
                    Permission(type=Permission.READ_FORMATTED_EHR),
+                   Permission(type=Permission.IMPORT_DATA),
+                   Permission(type=Permission.READ_DATA),
+                   Permission(type=Permission.UPDATE_DATA),
                    Permission(type=Permission.WRITE_FORMATTED_EHR)
                    ]
     return create_client(txn_signer, batch_signer, permissions)
@@ -139,11 +142,11 @@ def create_sponsor_client(txn_signer, batch_signer):
     return create_client(txn_signer, batch_signer, permissions)
 
 
-def create_investigator_client(txn_signer, batch_signer):
-    permissions = [Permission(type=Permission.READ_OWN_INVESTIGATOR),
-                   Permission(type=Permission.READ_FORMATTED_EHR)
-                   ]
-    return create_client(txn_signer, batch_signer, permissions)
+# def create_investigator_client(txn_signer, batch_signer):
+#     permissions = [Permission(type=Permission.READ_OWN_INVESTIGATOR),
+#                    Permission(type=Permission.READ_FORMATTED_EHR)
+#                    ]
+#     return create_client(txn_signer, batch_signer, permissions)
 
 
 def create_client(txn_signer, batch_signer, permissions):
