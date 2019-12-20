@@ -58,7 +58,7 @@ var Hospital = {
             }
         })
         .then(function(result) {
-            console.log("Get screening data")
+            console.log("Get Pre-screening data")
             Hospital.error = ""
             Hospital.sharedDataList = result.data
         })

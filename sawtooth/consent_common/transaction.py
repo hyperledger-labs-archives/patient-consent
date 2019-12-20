@@ -97,12 +97,12 @@ def _batch_header(batch_signer, transactions):
 def create_hospital_client(txn_signer, batch_signer):
     permissions = [Permission(type=Permission.READ_HOSPITAL),
                    Permission(type=Permission.READ_OWN_HOSPITAL),
-                   Permission(type=Permission.READ_EHR),
-                   Permission(type=Permission.READ_OWN_EHR),
+                   Permission(type=Permission.READ_PATIENT_DATA),
+                   Permission(type=Permission.READ_OWN_PATIENT),
                    Permission(type=Permission.READ_INVESTIGATOR),
-                   Permission(type=Permission.GRANT_TRANSFER_SHARED_EHR_ACCESS),
-                   Permission(type=Permission.REVOKE_TRANSFER_SHARED_EHR_ACCESS),
-                   Permission(type=Permission.WRITE_EHR)
+                   Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS),
+                   Permission(type=Permission.REVOKE_INVESTIGATOR_ACCESS),
+                   Permission(type=Permission.WRITE_PATIENT_DATA)
                    ]
     return create_client(txn_signer, batch_signer, permissions)
 
@@ -111,13 +111,12 @@ def create_patient_client(txn_signer, batch_signer):
     permissions = [Permission(type=Permission.READ_HOSPITAL),
                    Permission(type=Permission.READ_PATIENT),
                    Permission(type=Permission.READ_OWN_PATIENT),
-                   Permission(type=Permission.REVOKE_WRITE_EHR_ACCESS),
-                   Permission(type=Permission.GRANT_WRITE_EHR_ACCESS),
-                   Permission(type=Permission.READ_OWN_EHR),
-                   Permission(type=Permission.GRANT_READ_EHR_ACCESS),
-                   Permission(type=Permission.REVOKE_READ_EHR_ACCESS),
-                   Permission(type=Permission.GRANT_3RD_PARTY_ACCESS),
-                   Permission(type=Permission.REVOKE_3RD_PARTY_ACCESS)
+                   Permission(type=Permission.GRANT_READ_DATA_ACCESS),
+                   Permission(type=Permission.REVOKE_READ_DATA_ACCESS),
+                   Permission(type=Permission.READ_PATIENT_DATA),
+                   Permission(type=Permission.GRANT_WRITE_DATA_ACCESS),
+                   Permission(type=Permission.REVOKE_WRITE_DATA_ACCESS),
+                   Permission(type=Permission.SIGN_INFORM_CONSENT)
                    ]
     return create_client(txn_signer, batch_signer, permissions)
 
@@ -125,20 +124,22 @@ def create_patient_client(txn_signer, batch_signer):
 def create_investigator_client(txn_signer, batch_signer):
     permissions = [Permission(type=Permission.READ_HOSPITAL),
                    Permission(type=Permission.READ_OWN_INVESTIGATOR),
-                   Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA),
-                   Permission(type=Permission.READ_FORMATTED_EHR),
-                   Permission(type=Permission.IMPORT_DATA),
-                   Permission(type=Permission.READ_DATA),
-                   Permission(type=Permission.UPDATE_DATA),
-                   Permission(type=Permission.WRITE_FORMATTED_EHR)
+                   Permission(type=Permission.REQUEST_INFORM_CONSENT),
+                   Permission(type=Permission.READ_PATIENT)
+                   # Permission(type=Permission.IMPORT_DATA),
+                   # Permission(type=Permission.READ_DATA),
+                   # Permission(type=Permission.UPDATE_DATA),
+                   # Permission(type=Permission.WRITE_FORMATTED_EHR)
                    ]
     return create_client(txn_signer, batch_signer, permissions)
 
 
 def create_sponsor_client(txn_signer, batch_signer):
-    permissions = [Permission(type=Permission.READ_LAB),
-                   Permission(type=Permission.READ_OWN_LAB),
-                   Permission(type=Permission.READ_LAB_TEST)]
+    permissions = [
+                    # Permission(type=Permission.READ_LAB),
+                    # Permission(type=Permission.READ_OWN_LAB),
+                    # Permission(type=Permission.READ_LAB_TEST)
+    ]
     return create_client(txn_signer, batch_signer, permissions)
 
 
