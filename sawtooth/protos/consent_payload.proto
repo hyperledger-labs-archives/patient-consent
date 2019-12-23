@@ -7,8 +7,8 @@ message ConsentTransactionPayload {
         ADD_CLIENT = 1;
         GRANT_INVESTIGATOR_ACCESS = 2;
         REVOKE_INVESTIGATOR_ACCESS = 3;
-        GRANT_DATA_PROCESSING_ACCESS_ACTION = 4;
-        REVOKE_DATA_PROCESSING_ACCESS_ACTION = 5;
+        GRANT_DATA_PROCESSING_ACCESS = 4;
+        REVOKE_DATA_PROCESSING_ACCESS = 5;
         SIGN_INFORM_CONSENT = 6;
         REQUEST_INFORM_CONSENT = 7;
 //        GRANT_INVESTIGATOR_ACCESS_ACTION = 8;
@@ -22,8 +22,8 @@ message ConsentTransactionPayload {
     ActionOnAccess revoke_investigator_access = 4;
     ActionOnAccess grant_data_processing_access = 5;
     ActionOnAccess revoke_data_processing_access = 6;
-    ActionOnAccess sign_inform_consent = 7;
-    ActionOnAccess request_inform_consent = 8;
+    ActionOnAccess sign_inform_document_consent = 7;
+    ActionOnAccess request_inform_document_consent = 8;
 //    ActionOnAccess grant_share_shared_ehr_access = 9;
 //    ActionOnAccess revoke_share_shared_ehr_access = 10;
 }

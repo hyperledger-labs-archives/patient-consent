@@ -21,12 +21,12 @@ module.exports = {
                 value: Client.list['investigator'] //vnode.attrs.client_pkey
             }),
             m("a.user-list-item", {href: "/investigator/new/", oncreate: m.route.link}, "New Investigator"),
+            m("a.user-list-item", {href: "/investigator_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Investigator List"),
             m("a.user-list-item", "---"),
             m("a.user-list-item", {href: "/hospital_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Hospital List"),
             m("a.user-list-item", "---"),
 //            m("a.user-list-item", {href: "/doctor_list/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Doctors List"),
             m("a.user-list-item", {href: "/patient_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Patients List"),
-//            m("a.user-list-item", {href: "/investigator_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Investigator List"),
 //            m("a.user-list-item", {href: "/insurance_list/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Insurance List"),
 //            m("a.user-list-item", {href: "/payment_list/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Invoice List"),
 //            m("a.user-list-item", {href: "/lab_test_list/new/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Add Lab Test"),

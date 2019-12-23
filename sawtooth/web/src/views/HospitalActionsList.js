@@ -21,9 +21,9 @@ module.exports = {
             m("input.input[type=text][placeholder=Client public key][disabled=false]", {
                 value: Client.list['hospital'] //vnode.attrs.client_pkey
             }),
-//            m("a.user-list-item", {href: "/hospital_list/?client_key=" + Client.list['hospital'], oncreate: m.route.link}, "Hospital List"),
 //            m("a.user-list-item", {href: "/doctor_list/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Doctors List"),
             m("a.user-list-item", {href: "/hospital/new/", oncreate: m.route.link}, "New Hospital"),
+            m("a.user-list-item", {href: "/hospital_list/?client_key=" + Client.list['hospital'], oncreate: m.route.link}, "Hospital List"),
             m("a.user-list-item", "---"),
             m("a.user-list-item", {href: "/patient_list/?client_key=" + Client.list['hospital'], oncreate: m.route.link}, "Patients List"),
             m("a.user-list-item", "---"),

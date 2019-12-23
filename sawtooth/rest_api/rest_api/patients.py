@@ -138,19 +138,19 @@ async def register_new_patient(request):
                          headers=general.get_response_headers())
 
 
-@PATIENTS_BP.get('patients/revoke_read_ehr/<dest_pkey>')
-async def revoke_read_ehr_access(request, dest_pkey):
+@PATIENTS_BP.get('patients/grant_data_processing/<dest_pkey>')
+async def grant_data_processing(request, dest_pkey):
     """Updates auth information for the authorized account"""
     client_key = general.get_request_key_header(request)
     client_signer = general.get_signer(request, client_key)
-    revoke_read_ehr_permission_txn = consent_transaction.revoke_read_ehr_permission(
+    grant_read_ehr_permission_txn = consent_transaction.grant_data_processing(
         txn_signer=client_signer,
         batch_signer=client_signer,
         dest_pkey=dest_pkey)
 
-    batch, batch_id = ehr_transaction.make_batch_and_id([revoke_read_ehr_permission_txn], client_signer)
+    batch, batch_id = ehr_transaction.make_batch_and_id([grant_read_ehr_permission_txn], client_signer)
 
-    await security_messaging.revoke_read_ehr_access(
+    await security_messaging.grant_read_ehr_access(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
         [batch], client_key)
@@ -167,19 +167,19 @@ async def revoke_read_ehr_access(request, dest_pkey):
                          headers=general.get_response_headers())
 
 
-@PATIENTS_BP.get('patients/grant_read_ehr/<dest_pkey>')
-async def grant_read_ehr_access(request, dest_pkey):
+@PATIENTS_BP.get('patients/revoke_read_ehr/<dest_pkey>')
+async def revoke_read_ehr_access(request, dest_pkey):
     """Updates auth information for the authorized account"""
     client_key = general.get_request_key_header(request)
     client_signer = general.get_signer(request, client_key)
-    grant_read_ehr_permission_txn = consent_transaction.grant_read_ehr_permission(
+    revoke_read_ehr_permission_txn = consent_transaction.revoke_read_ehr_permission(
         txn_signer=client_signer,
         batch_signer=client_signer,
         dest_pkey=dest_pkey)
 
-    batch, batch_id = ehr_transaction.make_batch_and_id([grant_read_ehr_permission_txn], client_signer)
+    batch, batch_id = ehr_transaction.make_batch_and_id([revoke_read_ehr_permission_txn], client_signer)
 
-    await security_messaging.grant_read_ehr_access(
+    await security_messaging.revoke_read_ehr_access(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
         [batch], client_key)

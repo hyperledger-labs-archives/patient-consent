@@ -1,6 +1,6 @@
 var m = require("mithril")
 var Hospital = require("../models/Hospital")
-var Investigator = require("../models/Investigator")
+//var Investigator = require("../models/Investigator")
 
 var qrcodeurl = ''
 
@@ -37,15 +37,15 @@ module.exports = {
                     m("div"),
                     m("button", {
                         onclick: function() {
-                            Hospital.grant_write_ehr(hospital.public_key, vnode.attrs.client_key)
+                            Hospital.grant_data_processing(hospital.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Grant Write EHR Access'),
+                    }, 'Grant Data Processing Permission'),
                     m("div"),
                     m("button", {
                         onclick: function() {
-                            Hospital.revoke_write_ehr(hospital.public_key, vnode.attrs.client_key)
+                            Hospital.revoke_data_processing(hospital.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Revoke Write EHR Access'),
+                    }, 'Revoke Data Processing Permission'),
 //                    m("div"),
 //                    m("button", {
 //                        onclick: function() {
@@ -58,24 +58,25 @@ module.exports = {
 //                            Hospital.revoke_3rd_party_access(hospital.public_key, vnode.attrs.client_key)
 //                        }
 //                    }, 'Revoke 3rd Party Access'),
-                    m("div"),
-                    m("label.label", "Inclusion/Exclusion criteria"),
-                    m("input.input[type=text][placeholder=Example: excl_height_less=2]", {
-                        oninput: m.withAttr("value", function(value) {Hospital.current.incl_excl_criteria = value}),
-                        value: Hospital.current.incl_excl_criteria
-                    }),
-                    m("div"),
-                    m("button", {
-                        onclick: function() {
-                            Hospital.screening_data(hospital.public_key, vnode.attrs.client_key, Hospital.current.incl_excl_criteria)
-                        }
-                    }, 'Get Pre-Screening Data (incl. excl. criteria)'),
-                    m("div"),
-                    m("button", {
-                        onclick: function() {
-                            Hospital.get_shared_data(hospital.public_key, vnode.attrs.client_key)
-                        }
-                    }, 'Get Shared Data')
+//                    m("div"),
+//                    m("label.label", "Inclusion/Exclusion criteria"),
+//                    m("input.input[type=text][placeholder=Example: excl_height_less=2]", {
+//                        oninput: m.withAttr("value", function(value) {Hospital.current.incl_excl_criteria = value}),
+//                        value: Hospital.current.incl_excl_criteria
+//                    }),
+//                    m("div"),
+//                    m("button", {
+//                        onclick: function() {
+//                            Hospital.screening_data(hospital.public_key, vnode.attrs.client_key, Hospital.current.incl_excl_criteria)
+//                        }
+//                    }, 'Get Pre-Screening Data (incl. excl. criteria)'),
+//                    m("div"),
+//                    m("button", {
+//                        onclick: function() {
+//                            Hospital.get_shared_data(hospital.public_key, vnode.attrs.client_key)
+//                        }
+//                    }, 'Get Shared Data'),
+                    m("div")
                 )
             }),
             m("div"),
