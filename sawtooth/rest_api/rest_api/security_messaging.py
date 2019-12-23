@@ -274,9 +274,10 @@ async def get_patient(conn, patient_key):
 #     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_read_ehr_access(conn, timeout, batches, client_key):
+async def grant_data_processing(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_READ_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.GRANT_READ_DATA_ACCESS) in client.permissions and \
+            Permission(type=Permission.GRANT_WRITE_DATA_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -285,9 +286,10 @@ async def revoke_read_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_read_ehr_access(conn, timeout, batches, client_key):
+async def revoke_data_processing(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_READ_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.REVOKE_READ_DATA_ACCESS) in client.permissions and \
+            Permission(type=Permission.REVOKE_WRITE_DATA_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -296,9 +298,9 @@ async def grant_read_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_write_ehr_access(conn, timeout, batches, client_key):
+async def grant_investigator_access(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_WRITE_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -307,18 +309,7 @@ async def revoke_write_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_share_ehr_access(conn, timeout, batches, client_key):
-    client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_3RD_PARTY_ACCESS) in client.permissions:
-        LOGGER.debug('has permission: True')
-        await _send(conn, timeout, batches)
-        return
-    else:
-        LOGGER.debug('has permission: False')
-    raise ApiForbidden("Insufficient permission")
-
-
-async def revoke_access_to_share_data(conn, timeout, batches, client_key):
+async def revoke_investigator_access(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
     if Permission(type=Permission.REVOKE_INVESTIGATOR_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
@@ -329,9 +320,9 @@ async def revoke_access_to_share_data(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_write_ehr_access(conn, timeout, batches, client_key):
+async def request_inform_document_consent(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_WRITE_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.REQUEST_INFORM_CONSENT) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -340,9 +331,9 @@ async def grant_write_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_share_ehr_access(conn, timeout, batches, client_key):
+async def sign_inform_document_consent(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_3RD_PARTY_ACCESS) in client.permissions:
+    if Permission(type=Permission.SIGN_INFORM_CONSENT) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -351,15 +342,26 @@ async def grant_share_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_access_to_share_data(conn, timeout, batches, client_key):
-    client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS) in client.permissions:
-        LOGGER.debug('has permission: True')
-        await _send(conn, timeout, batches)
-        return
-    else:
-        LOGGER.debug('has permission: False')
-    raise ApiForbidden("Insufficient permission")
+# async def grant_share_ehr_access(conn, timeout, batches, client_key):
+#     client = await get_client(conn, client_key)
+#     if Permission(type=Permission.GRANT_3RD_PARTY_ACCESS) in client.permissions:
+#         LOGGER.debug('has permission: True')
+#         await _send(conn, timeout, batches)
+#         return
+#     else:
+#         LOGGER.debug('has permission: False')
+#     raise ApiForbidden("Insufficient permission")
+#
+#
+# async def grant_access_to_share_data(conn, timeout, batches, client_key):
+#     client = await get_client(conn, client_key)
+#     if Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS) in client.permissions:
+#         LOGGER.debug('has permission: True')
+#         await _send(conn, timeout, batches)
+#         return
+#     else:
+#         LOGGER.debug('has permission: False')
+#     raise ApiForbidden("Insufficient permission")
 
 
 # async def get_labs(conn, client_key):
