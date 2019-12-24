@@ -192,6 +192,35 @@ async def update_data(request):
                          headers=general.get_response_headers())
 
 
+@INVESTIGATORS_BP.get('investigators/request_inform_consent/<dest_pkey>')
+async def request_inform_consent(request, dest_pkey):
+    """Updates auth information for the authorized account"""
+    client_key = general.get_request_key_header(request)
+    client_signer = general.get_signer(request, client_key)
+    grant_read_ehr_permission_txn = consent_transaction.request_inform_document_consent(
+        txn_signer=client_signer,
+        batch_signer=client_signer,
+        dest_pkey=dest_pkey)
+
+    batch, batch_id = ehr_transaction.make_batch_and_id([grant_read_ehr_permission_txn], client_signer)
+
+    await security_messaging.request_inform_document_consent(
+        request.app.config.VAL_CONN,
+        request.app.config.TIMEOUT,
+        [batch], client_key)
+
+    try:
+        await security_messaging.check_batch_status(
+            request.app.config.VAL_CONN, [batch_id])
+    except (ApiBadRequest, ApiInternalError) as err:
+        # await auth_query.remove_auth_entry(
+        #     request.app.config.DB_CONN, request.json.get('email'))
+        raise err
+
+    return response.json(body={'status': general.DONE},
+                         headers=general.get_response_headers())
+
+
 @INVESTIGATORS_BP.post('investigators/data/eligible')
 async def set_eligible(request):
     client_key = general.get_request_key_header(request)

@@ -118,6 +118,27 @@ var Investigator = {
         })
     },
 
+    request_inform_consent: function(personPKey, clientKey) {
+        return m.request({
+            method: "GET",
+            url: "/api/investigators/request_inform_consent/" + personPKey,
+            headers: {
+                'ClientKey': clientKey
+            }
+//            data: Doctor.current,
+//            useBody: true,
+//            withCredentials: true,
+        })
+        .then(function(items) {
+//            Data.todos.list = items
+            Investigator.error = ""
+        })
+        .catch(function(e) {
+            console.log(e)
+            Investigator.error = e.message
+        })
+    },
+
     import_screening_data: function(dataList, clientKey) {
         return m.request({
             method: "POST",
