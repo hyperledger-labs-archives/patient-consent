@@ -38,7 +38,7 @@ module.exports = {
 //            m("a.user-list-item", {href: "/trial_data_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Trial Data List"),
             m("a.user-list-item", "---"),
 //            m("a.user-list-item", {href: "/ehr/new/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Register EHR"),
-            m("a.user-list-item", {href: "/ehr_list/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "EHRs List"),
+            m("a.user-list-item", {href: "/pre_screening_check/?client_key=" + Client.list['investigator'], oncreate: m.route.link}, "Pre-Screening Check"),
 //            m("a.user-list-item", {href: "/doctor/assign/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Assign Doctor"),
 //            m("a.user-list-item", {href: "/first_visit/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "First Visit"),
 //            m("a.user-list-item", {href: "/eat_pills/?client_key=" + Client.list['clinic'], oncreate: m.route.link}, "Eat Pills"),

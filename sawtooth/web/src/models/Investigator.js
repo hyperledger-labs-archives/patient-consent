@@ -76,10 +76,10 @@ var Investigator = {
         })
     },
 
-    grant_access_to_share_data: function(investigatorPKey, clientKey) {
+    grant_investigator_access: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/grant_access_to_share_data/" + investigatorPKey,
+            url: "/api/hospitals/grant_investigator_access/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }
@@ -97,10 +97,10 @@ var Investigator = {
         })
     },
 
-    revoke_access_to_share_data: function(investigatorPKey, clientKey) {
+    revoke_investigator_access: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/revoke_access_to_share_data/" + investigatorPKey,
+            url: "/api/hospitals/revoke_investigator_access/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }

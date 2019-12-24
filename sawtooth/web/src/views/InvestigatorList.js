@@ -24,15 +24,15 @@ module.exports = {
                     m("div"),
                     m("button", {
                         onclick: function() {
-                            Investigator.grant_access_to_share_data(investigator.public_key, vnode.attrs.client_key)
+                            Investigator.grant_investigator_access(investigator.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Grant Access To Share Data'),
+                    }, 'Grant Process Data Access'),
                     m("div"), 
                     m("button", {
                         onclick: function() {
-                            Investigator.revoke_access_to_share_data(investigator.public_key, vnode.attrs.client_key)
+                            Investigator.revoke_investigator_access(investigator.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Revoke Access To Share Data')
+                    }, 'Revoke Process Data Access')
                 )
             }),
             m("div"),

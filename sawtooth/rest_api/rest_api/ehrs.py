@@ -46,6 +46,33 @@ async def get_all_ehrs(request):
                          headers=general.get_response_headers())
 
 
+@EHRS_BP.get('ehrs/pre_screening_data')
+async def get_screening_data(request):
+    """Updates auth information for the authorized account"""
+    investigator_pkey = general.get_request_key_header(request)
+    ehr_list = await security_messaging.get_pre_screening_data(request.app.config.VAL_CONN,
+                                                               investigator_pkey, request.raw_args)
+
+    ehr_list_json = []
+    for address, data in ehr_list.items():
+        ehr_list_json.append({
+            'id': data.id,
+            'client_pkey': data.client_pkey,
+            'height': data.height,
+            'weight': data.weight,
+            'A1C': data.A1C,
+            'FPG': data.FPG,
+            'OGTT': data.OGTT,
+            'RPGT': data.RPGT,
+            'event_time': data.event_time,
+            'name': data.name,
+            'surname': data.surname
+        })
+
+    return response.json(body={'data': ehr_list_json},
+                         headers=general.get_response_headers())
+
+
 @EHRS_BP.post('ehrs')
 async def add_ehr(request):
     """Updates auth information for the authorized account"""

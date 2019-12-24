@@ -61,6 +61,7 @@ message Permission {
 
       READ_PATIENT_DATA = 400;
       WRITE_PATIENT_DATA = 401;
+      READ_OWN_PATIENT_DATA = 402;
 
       READ_SPONSOR = 500;
       READ_OWN_SPONSOR = 501;

@@ -49,25 +49,25 @@ var Hospital = {
         })
     },
 
-    screening_data: function(hospitalPKey, investigatorPKey, inclExclCriteria) {   //i.e Investigator
-        return m.request({
-            method: "GET",
-            url: "/api/hospitals/screening_data/" + hospitalPKey + "?" + inclExclCriteria,
-            headers: {
-                'ClientKey': investigatorPKey
-            }
-        })
-        .then(function(result) {
-            console.log("Get Pre-screening data")
-            Hospital.error = ""
-            Hospital.sharedDataList = result.data
-        })
-        .catch(function(e) {
-            console.log(e)
-            Hospital.error = e.message
-            Hospital.sharedDataList = []
-        })
-    },
+//    screening_data: function(hospitalPKey, investigatorPKey, inclExclCriteria) {   //i.e Investigator
+//        return m.request({
+//            method: "GET",
+//            url: "/api/hospitals/screening_data/" + hospitalPKey + "?" + inclExclCriteria,
+//            headers: {
+//                'ClientKey': investigatorPKey
+//            }
+//        })
+//        .then(function(result) {
+//            console.log("Get Pre-screening data")
+//            Hospital.error = ""
+//            Hospital.sharedDataList = result.data
+//        })
+//        .catch(function(e) {
+//            console.log(e)
+//            Hospital.error = e.message
+//            Hospital.sharedDataList = []
+//        })
+//    },
 
     current: {},
 

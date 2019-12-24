@@ -20,7 +20,7 @@ var TrialDataList = require("./views/TrialDataList")
 
 var EHRList = require("./views/EHRList")
 var EHRNewForm = require("./views/EHRNewForm")
-//var ClaimDetailsForm = require("./views/ClaimDetailsForm")
+var PreScreeningCheckForm = require("./views/PreScreeningCheck")
 
 //var LabTestsList = require("./views/LabTestsList")
 //var LabTestForm = require("./views/LabTestForm")
@@ -108,11 +108,11 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(TrialDataList, vnode.attrs))
         }
     },
-//    "/first_visit/": {
-//        render: function() {
-//            return m(Layout, m(FirstVisitForm))
-//        }
-//    },
+    "/pre_screening_check": {
+        render: function(vnode) {
+            return m(Layout, m(PreScreeningCheckForm, vnode.attrs))
+        }
+    },
 //    "/eat_pills/": {
 //        render: function() {
 //            return m(Layout, m(EatPillsForm))

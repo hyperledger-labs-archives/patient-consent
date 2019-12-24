@@ -114,6 +114,7 @@ def create_patient_client(txn_signer, batch_signer):
                    Permission(type=Permission.GRANT_READ_DATA_ACCESS),
                    Permission(type=Permission.REVOKE_READ_DATA_ACCESS),
                    Permission(type=Permission.READ_PATIENT_DATA),
+                   Permission(type=Permission.READ_OWN_PATIENT_DATA),
                    Permission(type=Permission.GRANT_WRITE_DATA_ACCESS),
                    Permission(type=Permission.REVOKE_WRITE_DATA_ACCESS),
                    Permission(type=Permission.SIGN_INFORM_CONSENT)
@@ -125,6 +126,7 @@ def create_investigator_client(txn_signer, batch_signer):
     permissions = [Permission(type=Permission.READ_HOSPITAL),
                    Permission(type=Permission.READ_OWN_INVESTIGATOR),
                    Permission(type=Permission.REQUEST_INFORM_CONSENT),
+                   Permission(type=Permission.READ_PATIENT_DATA),
                    Permission(type=Permission.READ_PATIENT)
                    # Permission(type=Permission.IMPORT_DATA),
                    # Permission(type=Permission.READ_DATA),
@@ -216,12 +218,12 @@ def revoke_data_processing(txn_signer, batch_signer, dest_pkey):
 
 
 def grant_investigator_access(txn_signer, batch_signer, dest_pkey):
-    patient_pkey = txn_signer.get_public_key().as_hex()
-    permission_hex = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=patient_pkey)
+    hospital_pkey = txn_signer.get_public_key().as_hex()
+    permission_hex = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=hospital_pkey)
 
     access = ActionOnAccess(
         dest_pkey=dest_pkey,
-        src_pkey=patient_pkey
+        src_pkey=hospital_pkey
     )
 
     payload = ConsentTransactionPayload(
@@ -237,12 +239,12 @@ def grant_investigator_access(txn_signer, batch_signer, dest_pkey):
 
 
 def revoke_investigator_access(txn_signer, batch_signer, dest_pkey):
-    patient_pkey = txn_signer.get_public_key().as_hex()
-    permission_hex = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=patient_pkey)
+    hospital_pkey = txn_signer.get_public_key().as_hex()
+    permission_hex = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=hospital_pkey)
 
     access = ActionOnAccess(
         dest_pkey=dest_pkey,
-        src_pkey=patient_pkey
+        src_pkey=hospital_pkey
     )
 
     payload = ConsentTransactionPayload(
@@ -258,12 +260,12 @@ def revoke_investigator_access(txn_signer, batch_signer, dest_pkey):
 
 
 def request_inform_document_consent(txn_signer, batch_signer, dest_pkey):
-    patient_pkey = txn_signer.get_public_key().as_hex()
-    permission_hex = helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=patient_pkey)
+    hospital_pkey = txn_signer.get_public_key().as_hex()
+    permission_hex = helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=hospital_pkey)
 
     access = ActionOnAccess(
         dest_pkey=dest_pkey,
-        src_pkey=patient_pkey
+        src_pkey=hospital_pkey
     )
 
     payload = ConsentTransactionPayload(
