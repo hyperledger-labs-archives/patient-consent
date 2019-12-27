@@ -79,23 +79,23 @@ module.exports = {
                     m("div")
                 )
             }),
-            m("div"),
-            m(".user-list", Hospital.sharedDataList.map(function(sharedData) {
-                return m("a.user-list-item", "ID: " + sharedData.id
-                    + "; HEIGHT: " + sharedData.height
-                    + "; WEIGHT: " + sharedData.weight
-                    + "; A1C: " + sharedData.A1C
-                    + "; FPG: " + sharedData.FPG
-                    + "; OGTT: " + sharedData.OGTT
-                    + "; RPGT: " + sharedData.RPGT
-                    + "; EVENT_TIME: " + sharedData.event_time)
-            })),
-            m("div"),
-            m("button", {
-                onclick: function() {
-                    Investigator.import_screening_data(Hospital.sharedDataList, vnode.attrs.client_key)
-                }
-            }, 'Import Screening Data'),
+//            m("div"),
+//            m(".user-list", Hospital.sharedDataList.map(function(sharedData) {
+//                return m("a.user-list-item", "ID: " + sharedData.id
+//                    + "; HEIGHT: " + sharedData.height
+//                    + "; WEIGHT: " + sharedData.weight
+//                    + "; A1C: " + sharedData.A1C
+//                    + "; FPG: " + sharedData.FPG
+//                    + "; OGTT: " + sharedData.OGTT
+//                    + "; RPGT: " + sharedData.RPGT
+//                    + "; EVENT_TIME: " + sharedData.event_time)
+//            })),
+//            m("div"),
+//            m("button", {
+//                onclick: function() {
+//                    Investigator.import_screening_data(Hospital.sharedDataList, vnode.attrs.client_key)
+//                }
+//            }, 'Import Screening Data'),
             m("div"),
             m("img", {src: qrcodeurl}),
             m("label.error", Hospital.error))

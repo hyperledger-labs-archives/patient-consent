@@ -139,15 +139,15 @@ var Investigator = {
         })
     },
 
-    import_screening_data: function(dataList, clientKey) {
+    import_to_trial_data: function(id, patient_pkey, clientKey) {
         return m.request({
-            method: "POST",
-            url: "/api/investigators/import_screening_data",
+            method: "GET",
+            url: "/api/investigators/import_to_trial_data/" + patient_pkey + "/" + id,
             headers: {
                 'ClientKey': clientKey
             },
-            data: dataList,
-            useBody: true,
+//            data: dataList,
+//            useBody: true,
 //            withCredentials: true,
         })
         .then(function(items) {
@@ -159,6 +159,27 @@ var Investigator = {
             Investigator.error = e.message
         })
     },
+
+//    import_screening_data: function(dataList, clientKey) {
+//        return m.request({
+//            method: "POST",
+//            url: "/api/investigators/import_screening_data",
+//            headers: {
+//                'ClientKey': clientKey
+//            },
+//            data: dataList,
+//            useBody: true,
+////            withCredentials: true,
+//        })
+//        .then(function(items) {
+////            Data.todos.list = items
+//            Investigator.error = ""
+//        })
+//        .catch(function(e) {
+//            console.log(e)
+//            Investigator.error = e.message
+//        })
+//    },
 
     update_trial_data: function(clientKey) {
         return m.request({

@@ -82,29 +82,71 @@ async def register_investigator(request):
                          headers=general.get_response_headers())
 
 
-@INVESTIGATORS_BP.post('investigators/import_screening_data')
-async def import_screening_data(request):
+# @INVESTIGATORS_BP.post('investigators/import_screening_data')
+# async def import_screening_data(request):
+#     """Updates auth information for the authorized account"""
+#     investigator_key = general.get_request_key_header(request)
+#     client_signer = general.get_signer(request, investigator_key)
+#     LOGGER.debug('request.json: ' + str(request.json))
+#     data_list = request.json
+#     data_txns = []
+#     for data in data_list:
+#         data_txn = ehr_transaction.add_data(
+#             txn_signer=client_signer,
+#             batch_signer=client_signer,
+#             uid=data['id'],
+#             height=data['height'],
+#             weight=data['weight'],
+#             a1c=data['A1C'],
+#             fpg=data['FPG'],
+#             ogtt=data['OGTT'],
+#             rpgt=data['RPGT'],
+#             event_time=data['event_time'])
+#         data_txns.append(data_txn)
+#
+#     batch, batch_id = ehr_transaction.make_batch_and_id(data_txns, client_signer)
+#
+#     await security_messaging.import_screening_data(
+#         request.app.config.VAL_CONN,
+#         request.app.config.TIMEOUT,
+#         [batch], investigator_key)
+#
+#     try:
+#         await security_messaging.check_batch_status(
+#             request.app.config.VAL_CONN, [batch_id])
+#     except (ApiBadRequest, ApiInternalError) as err:
+#         # await auth_query.remove_auth_entry(
+#         #     request.app.config.DB_CONN, request.json.get('email'))
+#         raise err
+#
+#     return response.json(body={'status': general.DONE},
+#                          headers=general.get_response_headers())
+
+
+@INVESTIGATORS_BP.get('investigators/import_to_trial_data/<client_key>/<ehr_id>')
+async def import_screening_data(request, client_key, ehr_id):
     """Updates auth information for the authorized account"""
     investigator_key = general.get_request_key_header(request)
     client_signer = general.get_signer(request, investigator_key)
-    LOGGER.debug('request.json: ' + str(request.json))
-    data_list = request.json
-    data_txns = []
-    for data in data_list:
-        data_txn = ehr_transaction.add_data(
+    # LOGGER.debug('request.json: ' + str(request.json))
+    # data_list = request.json
+    # data_txns = []
+    # for data in data_list:
+    ehr = await security_messaging.get_ehr_by_id(request.app.config.VAL_CONN, client_key, ehr_id)
+
+    data_txn = ehr_transaction.add_data(
             txn_signer=client_signer,
             batch_signer=client_signer,
-            uid=data['id'],
-            height=data['height'],
-            weight=data['weight'],
-            a1c=data['A1C'],
-            fpg=data['FPG'],
-            ogtt=data['OGTT'],
-            rpgt=data['RPGT'],
-            event_time=data['event_time'])
-        data_txns.append(data_txn)
+            uid=ehr['id'],
+            height=ehr['height'],
+            weight=ehr['weight'],
+            a1c=ehr['A1C'],
+            fpg=ehr['FPG'],
+            ogtt=ehr['OGTT'],
+            rpgt=ehr['RPGT'],
+            event_time=ehr['event_time'])
 
-    batch, batch_id = ehr_transaction.make_batch_and_id(data_txns, client_signer)
+    batch, batch_id = ehr_transaction.make_batch_and_id([data_txn], client_signer)
 
     await security_messaging.import_screening_data(
         request.app.config.VAL_CONN,
