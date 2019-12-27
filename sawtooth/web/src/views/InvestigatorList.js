@@ -16,23 +16,23 @@ module.exports = {
         return m(".user-list", Investigator.list.map(function(investigator) {
             return m("a.user-list-item", "PUBLIC KEY: " + investigator.public_key + "; NAME: " + investigator.name,
                     m("div"),
+//                    m("button", {
+//                        onclick: function() {
+//                            qrcodeurl='https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=' + investigator.public_key + '&chld=H|0'
+//                        }
+//                    }, 'Generate QR code for Investigator Public Key: ' + investigator.public_key),
+//                    m("div"),
                     m("button", {
                         onclick: function() {
-                            qrcodeurl='https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=' + investigator.public_key + '&chld=H|0'
+                            Investigator.grant_investigator_access(investigator.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Generate QR code for Investigator Public Key: ' + investigator.public_key),
-                    m("div"),
-                    m("button", {
-                        onclick: function() {
-                            Investigator.grant_access_to_share_data(investigator.public_key, vnode.attrs.client_key)
-                        }
-                    }, 'Grant Access To Share Data'),
+                    }, 'Grant Process Data Access'),
                     m("div"), 
                     m("button", {
                         onclick: function() {
-                            Investigator.revoke_access_to_share_data(investigator.public_key, vnode.attrs.client_key)
+                            Investigator.revoke_investigator_access(investigator.public_key, vnode.attrs.client_key)
                         }
-                    }, 'Revoke Access To Share Data')
+                    }, 'Revoke Process Data Access')
                 )
             }),
             m("div"),

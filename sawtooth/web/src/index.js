@@ -20,8 +20,8 @@ var TrialDataList = require("./views/TrialDataList")
 
 var EHRList = require("./views/EHRList")
 var EHRNewForm = require("./views/EHRNewForm")
-//var ClaimDetailsForm = require("./views/ClaimDetailsForm")
-
+var PreScreeningCheckForm = require("./views/PreScreeningCheck")
+var InformConsentRequestList = require("./views/InformConsentRequestList")
 //var LabTestsList = require("./views/LabTestsList")
 //var LabTestForm = require("./views/LabTestForm")
 //
@@ -108,16 +108,16 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(TrialDataList, vnode.attrs))
         }
     },
-//    "/first_visit/": {
-//        render: function() {
-//            return m(Layout, m(FirstVisitForm))
-//        }
-//    },
-//    "/eat_pills/": {
-//        render: function() {
-//            return m(Layout, m(EatPillsForm))
-//        }
-//    },
+    "/pre_screening_check": {
+        render: function(vnode) {
+            return m(Layout, m(PreScreeningCheckForm, vnode.attrs))
+        }
+    },
+    "/inform_consent_request_list": {
+        render: function(vnode) {
+            return m(Layout, m(InformConsentRequestList, vnode.attrs))
+        }
+    },
 //    "/pass_tests/": {
 //        render: function() {
 //            return m(Layout, m(PassTestsForm))
@@ -178,11 +178,11 @@ m.route(document.body, "/hospital", {
 //            return m(Layout, m(ContractForm, vnode.attrs))
 //        }
 //    },
-    "/patient/:patient_pkey": {
-        render: function(vnode) {
-            return m(Layout, m(PatientDetailsForm, vnode.attrs))
-        }
-    },
+//    "/patient/:patient_pkey": {
+//        render: function(vnode) {
+//            return m(Layout, m(PatientDetailsForm, vnode.attrs))
+//        }
+//    },
     "/hospital": {
         render: function() {
             return m(Layout, m(HospitalActionsList))

@@ -131,36 +131,63 @@ async def add_patient(conn, timeout, batches):
 #         return await messaging.get_state_by_address(conn, list_patient_address)
 #     raise ApiForbidden("Insufficient permission")
 
+
+async def get_inform_consent_request_list(conn, client_key):
+    client = await get_client(conn, client_key)
+    if Permission(type=Permission.READ_INFORM_CONSENT_REQUEST) in client.permissions and \
+            Permission(type=Permission.READ_SIGNED_INFORM_CONSENT) in client.permissions:
+        LOGGER.debug('has READ_INFORM_CONSENT_REQUEST and READ_SIGNED_INFORM_CONSENT permission: ' + str(client_key))
+        inform_consent_request_list = await get_inform_consent_request(conn, client_key)
+        return inform_consent_request_list
+    raise ApiForbidden("Insufficient permission")
+
+
 async def get_patients(conn, client_key):
     client = await get_client(conn, client_key)
     patient_list = {}
     if Permission(type=Permission.READ_PATIENT) in client.permissions:
-        list_patient_address = ehr_helper.make_patient_list_address()
         LOGGER.debug('has READ_PATIENT permission: ' + str(client_key))
-        # Get Consent
-        consent = await get_read_ehr_consent(conn, client_key)
-        consent_list = {}
-        for address, pt in consent.items():
-            LOGGER.debug('consent: ' + str(pt))
+        list_patient_address = ehr_helper.make_patient_list_address()
+        # Get Data Processing Access
+        data_processing_access = await get_data_processing_access(conn, client_key)
+        data_processing_access_list = {}
+        for address, pt in data_processing_access.items():
+            LOGGER.debug('data_processing_access: ' + str(pt))
             patient = await get_patient(conn, pt.src_pkey)
-            consent_list[pt.src_pkey] = patient
+            data_processing_access_list[pt.src_pkey] = patient
+
+        # consent = await get_read_ehr_consent(conn, client_key)
+        # consent_list = {}
+        # for address, pt in consent.items():
+        #     LOGGER.debug('consent: ' + str(pt))
+        #     patient = await get_patient(conn, pt.src_pkey)
+        #     consent_list[pt.src_pkey] = patient
         #
         patient_list_resources = await messaging.get_state_by_address(conn, list_patient_address)
         for entity in patient_list_resources.entries:
             pat = Patient()
             pat.ParseFromString(entity.data)
-
             patient_list[entity.address] = pat
             LOGGER.debug('patient: ' + str(pat))
-        # Apply Consent
+        # Apply Access
         for patient_address, pt in patient_list.items():
             LOGGER.debug('patient: ' + str(pt))
             if Permission(type=Permission.READ_OWN_PATIENT) in client.permissions and pt.public_key == client_key:
                 pass
-            elif pt.public_key not in consent_list:
+            elif pt.public_key not in data_processing_access_list:
                 pat2 = Patient()
                 patient_list[patient_address] = pat2
         return patient_list
+    elif Permission(type=Permission.READ_OWN_PATIENT) in client.permissions:
+        LOGGER.debug('has READ_OWN_PATIENT: ' + str(client_key))
+        # Get Data Processing Access
+        data_processing_access = await get_data_processing_access(conn, client_key)
+        data_processing_access_list = {}
+        for address, pt in data_processing_access.items():
+            LOGGER.debug('data_processing_access: ' + str(pt))
+            patient = await get_patient(conn, pt.src_pkey)
+            data_processing_access_list[pt.src_pkey] = patient
+        return data_processing_access_list
     raise ApiForbidden("Insufficient permission")
 
 
@@ -227,12 +254,12 @@ async def get_patient(conn, patient_key):
 
 async def add_ehr(conn, timeout, batches, dest_pkey, src_pkey):
     client = await get_client(conn, dest_pkey)
-    if Permission(type=Permission.WRITE_EHR) in client.permissions:
-        LOGGER.debug('has WRITE_EHR permission: True')
+    if Permission(type=Permission.WRITE_PATIENT_DATA) in client.permissions:
+        LOGGER.debug('has WRITE_PATIENT_DATA permission: True')
         # Has consent from patient
-        consent = await has_write_ehr_consent(conn, dest_pkey, src_pkey)
-        if not consent:
-            LOGGER.debug('no consent from patient')
+        access = await has_data_processing_access(conn, dest_pkey, src_pkey)
+        if not access:
+            LOGGER.debug('no data processing access')
             raise ApiForbidden("Insufficient permission")
         #
         await _send(conn, timeout, batches)
@@ -258,9 +285,10 @@ async def add_ehr(conn, timeout, batches, dest_pkey, src_pkey):
 #     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_read_ehr_access(conn, timeout, batches, client_key):
+async def grant_data_processing(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_READ_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.GRANT_READ_DATA_ACCESS) in client.permissions and \
+            Permission(type=Permission.GRANT_WRITE_DATA_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -269,9 +297,10 @@ async def revoke_read_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_read_ehr_access(conn, timeout, batches, client_key):
+async def revoke_data_processing(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_READ_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.REVOKE_READ_DATA_ACCESS) in client.permissions and \
+            Permission(type=Permission.REVOKE_WRITE_DATA_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -280,9 +309,9 @@ async def grant_read_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_write_ehr_access(conn, timeout, batches, client_key):
+async def grant_investigator_access(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_WRITE_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -291,9 +320,9 @@ async def revoke_write_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_share_ehr_access(conn, timeout, batches, client_key):
+async def revoke_investigator_access(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_3RD_PARTY_ACCESS) in client.permissions:
+    if Permission(type=Permission.REVOKE_INVESTIGATOR_ACCESS) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -302,9 +331,9 @@ async def revoke_share_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def revoke_access_to_share_data(conn, timeout, batches, client_key):
+async def request_inform_document_consent(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.REVOKE_TRANSFER_SHARED_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.REQUEST_INFORM_CONSENT) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -313,9 +342,9 @@ async def revoke_access_to_share_data(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_write_ehr_access(conn, timeout, batches, client_key):
+async def sign_inform_document_consent(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_WRITE_EHR_ACCESS) in client.permissions:
+    if Permission(type=Permission.SIGN_INFORM_CONSENT) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -324,9 +353,9 @@ async def grant_write_ehr_access(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
-async def grant_share_ehr_access(conn, timeout, batches, client_key):
+async def decline_inform_consent(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_3RD_PARTY_ACCESS) in client.permissions:
+    if Permission(type=Permission.DECLINE_INFORM_CONSENT) in client.permissions:
         LOGGER.debug('has permission: True')
         await _send(conn, timeout, batches)
         return
@@ -334,16 +363,26 @@ async def grant_share_ehr_access(conn, timeout, batches, client_key):
         LOGGER.debug('has permission: False')
     raise ApiForbidden("Insufficient permission")
 
-
-async def grant_access_to_share_data(conn, timeout, batches, client_key):
-    client = await get_client(conn, client_key)
-    if Permission(type=Permission.GRANT_TRANSFER_SHARED_EHR_ACCESS) in client.permissions:
-        LOGGER.debug('has permission: True')
-        await _send(conn, timeout, batches)
-        return
-    else:
-        LOGGER.debug('has permission: False')
-    raise ApiForbidden("Insufficient permission")
+# async def grant_share_ehr_access(conn, timeout, batches, client_key):
+#     client = await get_client(conn, client_key)
+#     if Permission(type=Permission.GRANT_3RD_PARTY_ACCESS) in client.permissions:
+#         LOGGER.debug('has permission: True')
+#         await _send(conn, timeout, batches)
+#         return
+#     else:
+#         LOGGER.debug('has permission: False')
+#     raise ApiForbidden("Insufficient permission")
+#
+#
+# async def grant_access_to_share_data(conn, timeout, batches, client_key):
+#     client = await get_client(conn, client_key)
+#     if Permission(type=Permission.GRANT_INVESTIGATOR_ACCESS) in client.permissions:
+#         LOGGER.debug('has permission: True')
+#         await _send(conn, timeout, batches)
+#         return
+#     else:
+#         LOGGER.debug('has permission: False')
+#     raise ApiForbidden("Insufficient permission")
 
 
 # async def get_labs(conn, client_key):
@@ -380,90 +419,123 @@ async def get_client(conn, client_key):
     raise ApiUnauthorized("No such client registered")
 
 
-async def has_read_ehr_consent(conn, dest_pkey, src_pkey):  # dest_pkey - doctor, src_pkey - patient
-    consent_list = await get_read_ehr_consent(conn, dest_pkey)
-    for address, data in consent_list.items():
-        LOGGER.debug('consent_address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
+# async def has_read_ehr_consent(conn, dest_pkey, src_pkey):  # dest_pkey - doctor, src_pkey - patient
+#     consent_list = await get_read_ehr_consent(conn, dest_pkey)
+#     for address, data in consent_list.items():
+#         LOGGER.debug('consent_address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
+#         if data.src_pkey == src_pkey:
+#             LOGGER.debug('has consent!')
+#             return True
+#     return False
+
+
+async def has_data_processing_access(conn, dest_pkey, src_pkey):  # dest_pkey - doctor, src_pkey - patient
+    access_list = await get_data_processing_access(conn, dest_pkey)
+    for address, data in access_list.items():
+        LOGGER.debug('address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
         if data.src_pkey == src_pkey:
             LOGGER.debug('has consent!')
             return True
     return False
 
 
-async def has_write_ehr_consent(conn, dest_pkey, src_pkey):  # dest_pkey - doctor, src_pkey - patient
-    consent_list = await get_write_ehr_consent(conn, dest_pkey)
-    for address, data in consent_list.items():
-        LOGGER.debug('consent_address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
-        if data.src_pkey == src_pkey:
-            LOGGER.debug('has consent!')
-            return True
-    return False
+# async def has_share_shared_ehr_consent(conn, dest_pkey, src_pkey):  # dest_pkey - investigator, src_pkey - hospital
+#     consent_list = await get_share_shared_ehr_consent(conn, dest_pkey)
+#     for address, data in consent_list.items():
+#         LOGGER.debug('consent_address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
+#         if data.src_pkey == src_pkey:
+#             LOGGER.debug('has consent!')
+#             return True
+#     return False
 
-
-async def has_share_shared_ehr_consent(conn, dest_pkey, src_pkey):  # dest_pkey - investigator, src_pkey - hospital
-    consent_list = await get_share_shared_ehr_consent(conn, dest_pkey)
-    for address, data in consent_list.items():
-        LOGGER.debug('consent_address: data -> ' + str(data) + '; src_key -> ' + str(src_pkey))
-        if data.src_pkey == src_pkey:
-            LOGGER.debug('has consent!')
-            return True
-    return False
-
-
-async def get_read_ehr_consent(conn, client_key):
-    consent_address = consent_helper.make_consent_read_ehr_list_address_by_destination_client(client_key)
-    LOGGER.debug('consent_address: ' + str(consent_address))
-    consent_resources = await messaging.get_state_by_address(conn, consent_address)
-    LOGGER.debug('consent_resources: ' + str(consent_resources))
-    consent_list = {}
-    for entity in consent_resources.entries:
+async def get_inform_consent_request(conn, client_key):
+    request_inform_consent_list_address = \
+        consent_helper.make_request_inform_document_consent_list_address_by_destination_client(client_key)
+    LOGGER.debug('request_inform_consent_list_address: ' + str(request_inform_consent_list_address))
+    request_inform_consent_list_resources = \
+        await messaging.get_state_by_address(conn, request_inform_consent_list_address)
+    LOGGER.debug('request_inform_consent_list_resources: ' + str(request_inform_consent_list_resources))
+    request_inform_consent_list = {}
+    for entity in request_inform_consent_list_resources.entries:
         aoa = ActionOnAccess()
         aoa.ParseFromString(entity.data)
-        consent_list[entity.address] = aoa
-        LOGGER.debug('consent: ' + str(aoa))
-    return consent_list
+        request_inform_consent_list[entity.address] = aoa
+        LOGGER.debug('request inform consent: ' + str(aoa))
+    return request_inform_consent_list
 
 
-async def get_write_ehr_consent(conn, client_key):
-    consent_address = consent_helper.make_consent_write_ehr_list_address_by_destination_client(client_key)
-    LOGGER.debug('consent_address: ' + str(consent_address))
-    consent_resources = await messaging.get_state_by_address(conn, consent_address)
-    LOGGER.debug('consent_resources: ' + str(consent_resources))
-    consent_list = {}
-    for entity in consent_resources.entries:
+async def get_signed_inform_consent(conn, client_key):
+    signed_inform_consent_list_address = \
+        consent_helper.make_sign_inform_document_consent_list_address_by_destination_client(client_key)
+    LOGGER.debug('signed_inform_consent_list_address: ' + str(signed_inform_consent_list_address))
+    signed_inform_consent_list_resources = \
+        await messaging.get_state_by_address(conn, signed_inform_consent_list_address)
+    LOGGER.debug('signed_inform_consent_list_resources: ' + str(signed_inform_consent_list_resources))
+    signed_inform_consent_list = {}
+    for entity in signed_inform_consent_list_resources.entries:
         aoa = ActionOnAccess()
         aoa.ParseFromString(entity.data)
-        consent_list[entity.address] = aoa
-        LOGGER.debug('consent: ' + str(aoa))
-    return consent_list
+        signed_inform_consent_list[entity.address] = aoa
+        LOGGER.debug('signed inform consent: ' + str(aoa))
+    return signed_inform_consent_list
 
 
-async def get_share_ehr_consent(conn, client_key):
-    consent_address = consent_helper.make_consent_share_ehr_list_address_by_destination_client(client_key)
-    LOGGER.debug('consent_address: ' + str(consent_address))
-    consent_resources = await messaging.get_state_by_address(conn, consent_address)
-    LOGGER.debug('consent_resources: ' + str(consent_resources))
-    consent_list = {}
-    for entity in consent_resources.entries:
+async def get_data_processing_access(conn, client_key):
+    data_processing_access = consent_helper.make_data_processing_access_list_address_by_destination_client(client_key)
+    LOGGER.debug('data_processing_access: ' + str(data_processing_access))
+    data_processing_access_resources = await messaging.get_state_by_address(conn, data_processing_access)
+    LOGGER.debug('data_processing_access_resources: ' + str(data_processing_access_resources))
+    data_processing_access_list = {}
+    for entity in data_processing_access_resources.entries:
         aoa = ActionOnAccess()
         aoa.ParseFromString(entity.data)
-        consent_list[entity.address] = aoa
-        LOGGER.debug('consent: ' + str(aoa))
-    return consent_list
+        data_processing_access_list[entity.address] = aoa
+        LOGGER.debug('data processing access: ' + str(aoa))
+    return data_processing_access_list
 
 
-async def get_share_shared_ehr_consent(conn, client_key):
-    consent_address = consent_helper.make_consent_share_shared_ehr_list_address_by_destination_client(client_key)
-    LOGGER.debug('consent_address: ' + str(consent_address))
-    consent_resources = await messaging.get_state_by_address(conn, consent_address)
-    LOGGER.debug('consent_resources: ' + str(consent_resources))
-    consent_list = {}
-    for entity in consent_resources.entries:
+# async def get_write_ehr_consent(conn, client_key):
+#     consent_address = consent_helper.make_consent_write_ehr_list_address_by_destination_client(client_key)
+#     LOGGER.debug('consent_address: ' + str(consent_address))
+#     consent_resources = await messaging.get_state_by_address(conn, consent_address)
+#     LOGGER.debug('consent_resources: ' + str(consent_resources))
+#     consent_list = {}
+#     for entity in consent_resources.entries:
+#         aoa = ActionOnAccess()
+#         aoa.ParseFromString(entity.data)
+#         consent_list[entity.address] = aoa
+#         LOGGER.debug('consent: ' + str(aoa))
+#     return consent_list
+#
+#
+# async def get_share_ehr_consent(conn, client_key):
+#     consent_address = consent_helper.make_consent_share_ehr_list_address_by_destination_client(client_key)
+#     LOGGER.debug('consent_address: ' + str(consent_address))
+#     consent_resources = await messaging.get_state_by_address(conn, consent_address)
+#     LOGGER.debug('consent_resources: ' + str(consent_resources))
+#     consent_list = {}
+#     for entity in consent_resources.entries:
+#         aoa = ActionOnAccess()
+#         aoa.ParseFromString(entity.data)
+#         consent_list[entity.address] = aoa
+#         LOGGER.debug('consent: ' + str(aoa))
+#     return consent_list
+#
+
+async def get_shared_ehrs(conn, investigator_pkey):
+    investigator_access_address = \
+        consent_helper.make_investigator_access_list_address_by_destination_client(investigator_pkey)
+    LOGGER.debug('investigator_access_address: ' + str(investigator_access_address))
+    investigator_access_resources = await messaging.get_state_by_address(conn, investigator_access_address)
+    LOGGER.debug('investigator_access_resources: ' + str(investigator_access_resources))
+    ehrs_list = {}
+    for entity in investigator_access_resources.entries:
         aoa = ActionOnAccess()
         aoa.ParseFromString(entity.data)
-        consent_list[entity.address] = aoa
-        LOGGER.debug('consent: ' + str(aoa))
-    return consent_list
+        ehrs = await get_ehrs(conn, aoa.src_pkey)
+        ehrs_list.update(ehrs)
+        LOGGER.debug('ehrs: ' + str(ehrs))
+    return ehrs_list
 
 # async def get_lab_tests(conn, client_key):
 #     client = await get_client(conn, client_key)
@@ -630,14 +702,14 @@ async def get_data_from_investigators(conn, client_key):
 async def get_ehrs(conn, client_key):
     client = await get_client(conn, client_key)
     ehr_list = {}
-    if Permission(type=Permission.READ_EHR) in client.permissions:
+    if Permission(type=Permission.READ_PATIENT_DATA) in client.permissions:
         ehr_list_address = ehr_helper.make_ehr_list_address()
-        LOGGER.debug('has READ_EHR permission: ' + str(client_key))
+        LOGGER.debug('has READ_PATIENT_DATA permission: ' + str(client_key))
         # Get Consent
-        consent = await get_read_ehr_consent(conn, client_key)
+        access = await get_data_processing_access(conn, client_key)
         patient_list = {}
-        for address, pt in consent.items():
-            LOGGER.debug('patient consent: ' + str(pt))
+        for address, pt in access.items():
+            LOGGER.debug('patient access: ' + str(pt))
             patient = await get_patient(conn, pt.src_pkey)
             patient_list[pt.src_pkey] = patient
         #
@@ -660,9 +732,9 @@ async def get_ehrs(conn, client_key):
                     e.surname = pt_local.surname
                     ehr_list[claim_address] = e
         return ehr_list
-    elif Permission(type=Permission.READ_OWN_EHR) in client.permissions:
+    elif Permission(type=Permission.READ_OWN_PATIENT_DATA) in client.permissions:
         ehr_list_ids_address = ehr_helper.make_ehr_list_by_patient_address(client_key)
-        LOGGER.debug('has READ_OWN_EHR permission: ' + str(ehr_list_ids_address))
+        LOGGER.debug('has READ_OWN_PATIENT_DATA permission: ' + str(ehr_list_ids_address))
         ehr_list_ids = await messaging.get_state_by_address(conn, ehr_list_ids_address)
         for entity in ehr_list_ids.entries:
             ehr_id = entity.data.decode()
@@ -676,63 +748,188 @@ async def get_ehrs(conn, client_key):
                 ehr_list[entity2.address] = e
         return ehr_list
     else:
-        LOGGER.debug('neither READ_OWN_EHR nor READ_EHR permissions')
+        LOGGER.debug('neither READ_PATIENT_DATA nor READ_OWN_PATIENT_DATA permissions')
     raise ApiForbidden("Insufficient permission")
 
 
-async def get_shared_data(conn, hospital_pkey, investigator_pkey):
-    # get consent from patients for hospital
-    # return such data to investigator
-    hospital_client = await get_client(conn, hospital_pkey)
-    investigator_client = await get_client(conn, investigator_pkey)
-    data_list = {}
+async def get_ehr_by_id(conn, client_key, ehr_id):
+    client = await get_client(conn, client_key)
     ehr_list = {}
-    # get consent to share data by hospital to investigator
-    if Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA) in investigator_client.permissions:
-        consent = await has_share_shared_ehr_consent(conn, investigator_pkey, hospital_pkey)
-        if not consent:
-            return data_list
-        # get ehr by hospital
-        if Permission(type=Permission.READ_EHR) in hospital_client.permissions:
-            ehr_list_address = ehr_helper.make_ehr_list_address()
-            LOGGER.debug('has READ_EHR permission: ' + str(hospital_pkey))
-            # Get Consent
-            consent = await get_share_ehr_consent(conn, hospital_pkey)
-            patient_list = {}
-            for address, pt in consent.items():
-                LOGGER.debug('patient consent: ' + str(pt))
-                patient = await get_patient(conn, pt.src_pkey)
-                patient_list[pt.src_pkey] = patient
-            #
-            ehr_list_resources = await messaging.get_state_by_address(conn, ehr_list_address)
-            for entity in ehr_list_resources.entries:
-                ehr = EHRWithUser()
-                ehr.ParseFromString(entity.data)
-                ehr_list[entity.address] = ehr
-                LOGGER.debug('ehr: ' + str(ehr))
-            # Apply Consent
-            for patient_address, pt in patient_list.items():
-                LOGGER.debug('patient: ' + str(pt))
-                for ehr_address, e in ehr_list.items():
-                    LOGGER.debug('ehr: ' + str(e))
-                    if patient_address == e.client_pkey:
-                        LOGGER.debug('match!')
-                        data = Data()
-                        data.id = e.id
-                        data.height = e.height
-                        data.weight = e.weight
-                        data.A1C = e.A1C
-                        data.FPG = e.FPG
-                        data.OGTT = e.OGTT
-                        data.RPGT = e.RPGT
-                        data.event_time = e.event_time
-                        data_list[ehr_address] = data
-            return data_list
-        else:
-            LOGGER.debug('Has no READ_EHR permissions or consent')
+    if Permission(type=Permission.READ_PATIENT_DATA) in client.permissions:
+        # ehr_list_address = ehr_helper.make_ehr_list_address()
+        ehr_address = ehr_helper.make_ehr_address(ehr_id)
+        LOGGER.debug('has READ_PATIENT_DATA permission: ' + str(client_key))
+        # Get Consent
+        access = await get_data_processing_access(conn, client_key)
+        patient_list = {}
+        for address, pt in access.items():
+            LOGGER.debug('patient access: ' + str(pt))
+            patient = await get_patient(conn, pt.src_pkey)
+            patient_list[pt.src_pkey] = patient
+        #
+        ehr_resources = await messaging.get_state_by_address(conn, ehr_address)
+        for entity in ehr_resources.entries:
+            cl = EHRWithUser()
+            cl.ParseFromString(entity.data)
+
+            ehr_list[entity.address] = cl
+            LOGGER.debug('ehr: ' + str(cl))
+        # Apply Consent
+        for patient_address, pt in patient_list.items():
+            LOGGER.debug('patient: ' + str(pt))
+            for claim_address, e in ehr_list.items():
+                LOGGER.debug('ehr: ' + str(e))
+                if patient_address == e.client_pkey:
+                    LOGGER.debug('match!')
+                    pt_local = patient_list[patient_address]
+                    e.name = pt_local.name
+                    e.surname = pt_local.surname
+                    ehr_list[claim_address] = e
+        return ehr_list
+    elif Permission(type=Permission.READ_OWN_PATIENT_DATA) in client.permissions:
+        # ehr_list_ids_address = ehr_helper.make_ehr_list_by_patient_address(client_key)
+        LOGGER.debug('has READ_OWN_PATIENT_DATA permission: ' + str(client_key))
+        # ehr_list_ids = await messaging.get_state_by_address(conn, ehr_list_ids_address)
+        # for entity in ehr_list_ids.entries:
+        #     ehr_id = entity.data.decode()
+        ehr_address = ehr_helper.make_ehr_address(ehr_id)
+        LOGGER.debug('get ehr: ' + str(ehr_address))
+        ehr_resources = await messaging.get_state_by_address(conn, ehr_address)
+        for entity in ehr_resources.entries:
+            LOGGER.debug('get ehr entity: ' + str(entity.address))
+            e = EHRWithUser()
+            e.ParseFromString(entity.data)
+            ehr_list[entity.address] = e
+        return ehr_list
     else:
-        LOGGER.debug('Has no READ_TRANSFERRED_SHARED_DATA permissions or consent')
+        LOGGER.debug('neither READ_PATIENT_DATA nor READ_OWN_PATIENT_DATA permissions')
     raise ApiForbidden("Insufficient permission")
+
+
+# async def get_shared_data(conn, hospital_pkey, investigator_pkey):
+#     # get consent from patients for hospital
+#     # return such data to investigator
+#     hospital_client = await get_client(conn, hospital_pkey)
+#     investigator_client = await get_client(conn, investigator_pkey)
+#     data_list = {}
+#     ehr_list = {}
+#     # get consent to share data by hospital to investigator
+#     if Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA) in investigator_client.permissions:
+#         consent = await has_share_shared_ehr_consent(conn, investigator_pkey, hospital_pkey)
+#         if not consent:
+#             return data_list
+#         # get ehr by hospital
+#         if Permission(type=Permission.READ_EHR) in hospital_client.permissions:
+#             # ehr_list_address = ehr_helper.make_ehr_list_address()
+#             ehr_id_list_address = ehr_helper.make_ehr_list_by_hospital_address(hospital_pkey)
+#             LOGGER.debug('has READ_EHR permission: ' + str(hospital_pkey))
+#
+#             # Get Consent
+#             # consent = await get_share_ehr_consent(conn, hospital_pkey)
+#             # patient_list = {}
+#             # for address, pt in consent.items():
+#             #     LOGGER.debug('patient consent: ' + str(pt))
+#             #     patient = await get_patient(conn, pt.src_pkey)
+#             #     patient_list[pt.src_pkey] = patient
+#             #
+#             ehr_id_list_resources = await messaging.get_state_by_address(conn, ehr_id_list_address)
+#             for entity in ehr_id_list_resources.entries:
+#                 LOGGER.debug('entity.data: ' + str(entity.data))
+#                 ehr_list_address = ehr_helper.make_ehr_address(entity.data.decode())
+#                 ehr_list_resources = await messaging.get_state_by_address(conn, ehr_list_address)
+#                 for entity2 in ehr_list_resources.entries:
+#                     LOGGER.debug('entity2.data: ' + str(entity2.data))
+#                     ehr = EHRWithUser()
+#                     ehr.ParseFromString(entity2.data)
+#                     ehr_list[entity2.address] = ehr
+#                     LOGGER.debug('ehr: ' + str(ehr))
+#             # Apply Consent
+#             patient_list = await get_patients(conn, investigator_pkey)
+#             for patient_address, pt in patient_list.items():
+#                 LOGGER.debug('patient: ' + str(pt))
+#                 for ehr_address, e in ehr_list.items():
+#                     LOGGER.debug('ehr: ' + str(e))
+#                     if patient_address == e.client_pkey:
+#                         LOGGER.debug('match!')
+#                         data = Data()
+#                         data.id = e.id
+#                         data.height = e.height
+#                         data.weight = e.weight
+#                         data.A1C = e.A1C
+#                         data.FPG = e.FPG
+#                         data.OGTT = e.OGTT
+#                         data.RPGT = e.RPGT
+#                         data.event_time = e.event_time
+#                         data_list[ehr_address] = data
+#             return data_list
+#         else:
+#             LOGGER.debug('Has no READ_EHR permissions or consent')
+#     else:
+#         LOGGER.debug('Has no READ_TRANSFERRED_SHARED_DATA permissions or consent')
+#     raise ApiForbidden("Insufficient permission")
+
+
+# async def get_shared_data(conn, hospital_pkey, investigator_pkey):
+#     # get consent from patients for hospital
+#     # return such data to investigator
+#     hospital_client = await get_client(conn, hospital_pkey)
+#     investigator_client = await get_client(conn, investigator_pkey)
+#     data_list = {}
+#     ehr_list = {}
+#     # get consent to share data by hospital to investigator
+#     if Permission(type=Permission.READ_TRANSFERRED_SHARED_DATA) in investigator_client.permissions:
+#         consent = await has_share_shared_ehr_consent(conn, investigator_pkey, hospital_pkey)
+#         if not consent:
+#             return data_list
+#         # get ehr by hospital
+#         if Permission(type=Permission.READ_EHR) in hospital_client.permissions:
+#             # ehr_list_address = ehr_helper.make_ehr_list_address()
+#             ehr_id_list_address = ehr_helper.make_ehr_list_by_hospital_address(hospital_pkey)
+#             LOGGER.debug('has READ_EHR permission: ' + str(hospital_pkey))
+#
+#             # Get Consent
+#             # consent = await get_share_ehr_consent(conn, hospital_pkey)
+#             # patient_list = {}
+#             # for address, pt in consent.items():
+#             #     LOGGER.debug('patient consent: ' + str(pt))
+#             #     patient = await get_patient(conn, pt.src_pkey)
+#             #     patient_list[pt.src_pkey] = patient
+#             #
+#             ehr_id_list_resources = await messaging.get_state_by_address(conn, ehr_id_list_address)
+#             for entity in ehr_id_list_resources.entries:
+#                 LOGGER.debug('entity.data: ' + str(entity.data))
+#                 ehr_list_address = ehr_helper.make_ehr_address(entity.data.decode())
+#                 ehr_list_resources = await messaging.get_state_by_address(conn, ehr_list_address)
+#                 for entity2 in ehr_list_resources.entries:
+#                     LOGGER.debug('entity2.data: ' + str(entity2.data))
+#                     ehr = EHRWithUser()
+#                     ehr.ParseFromString(entity2.data)
+#                     ehr_list[entity2.address] = ehr
+#                     LOGGER.debug('ehr: ' + str(ehr))
+#             # Apply Consent
+#             patient_list = await get_patients(conn, investigator_pkey)
+#             for patient_address, pt in patient_list.items():
+#                 LOGGER.debug('patient: ' + str(pt))
+#                 for ehr_address, e in ehr_list.items():
+#                     LOGGER.debug('ehr: ' + str(e))
+#                     if patient_address == e.client_pkey:
+#                         LOGGER.debug('match!')
+#                         data = Data()
+#                         data.id = e.id
+#                         data.height = e.height
+#                         data.weight = e.weight
+#                         data.A1C = e.A1C
+#                         data.FPG = e.FPG
+#                         data.OGTT = e.OGTT
+#                         data.RPGT = e.RPGT
+#                         data.event_time = e.event_time
+#                         data_list[ehr_address] = data
+#             return data_list
+#         else:
+#             LOGGER.debug('Has no READ_EHR permissions or consent')
+#     else:
+#         LOGGER.debug('Has no READ_TRANSFERRED_SHARED_DATA permissions or consent')
+#     raise ApiForbidden("Insufficient permission")
 
 
 def _get_int(value):
@@ -761,13 +958,18 @@ def _match_incl_excl_criteria(data, inc_excl_criteria):
     return True
 
 
-async def get_screening_data(conn, hospital_pkey, investigator_pkey, inc_excl_criteria):
-    data_list = await get_shared_data(conn, hospital_pkey, investigator_pkey)
-    data_screening_list = {}
-    for address, data in data_list.items():
-        if _match_incl_excl_criteria(data, inc_excl_criteria):
-            data_screening_list[address] = data
-    return data_screening_list
+async def get_pre_screening_data(conn, investigator_pkey, inc_excl_criteria):
+    client = await get_client(conn, investigator_pkey)
+    if Permission(type=Permission.READ_PATIENT_DATA) in client.permissions:
+        ehr_list = await get_shared_ehrs(conn, investigator_pkey)
+        ehr_screening_list = {}
+        for address, ehr in ehr_list.items():
+            if _match_incl_excl_criteria(ehr, inc_excl_criteria):
+                ehr_screening_list[address] = ehr
+        return ehr_screening_list
+    else:
+        LOGGER.debug('has permission: False')
+    raise ApiForbidden("Insufficient permission")
 
 
 async def import_screening_data(conn, timeout, batches, client_key):

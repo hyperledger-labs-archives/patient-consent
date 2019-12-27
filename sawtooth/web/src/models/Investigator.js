@@ -76,10 +76,10 @@ var Investigator = {
         })
     },
 
-    grant_access_to_share_data: function(investigatorPKey, clientKey) {
+    grant_investigator_access: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/grant_access_to_share_data/" + investigatorPKey,
+            url: "/api/hospitals/grant_investigator_access/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }
@@ -97,10 +97,10 @@ var Investigator = {
         })
     },
 
-    revoke_access_to_share_data: function(investigatorPKey, clientKey) {
+    revoke_investigator_access: function(investigatorPKey, clientKey) {
         return m.request({
             method: "GET",
-            url: "/api/hospitals/revoke_access_to_share_data/" + investigatorPKey,
+            url: "/api/hospitals/revoke_investigator_access/" + investigatorPKey,
             headers: {
                 'ClientKey': clientKey
             }
@@ -118,15 +118,36 @@ var Investigator = {
         })
     },
 
-    import_screening_data: function(dataList, clientKey) {
+    request_inform_consent: function(personPKey, clientKey) {
         return m.request({
-            method: "POST",
-            url: "/api/investigators/import_screening_data",
+            method: "GET",
+            url: "/api/investigators/request_inform_consent/" + personPKey,
+            headers: {
+                'ClientKey': clientKey
+            }
+//            data: Doctor.current,
+//            useBody: true,
+//            withCredentials: true,
+        })
+        .then(function(items) {
+//            Data.todos.list = items
+            Investigator.error = ""
+        })
+        .catch(function(e) {
+            console.log(e)
+            Investigator.error = e.message
+        })
+    },
+
+    import_to_trial_data: function(id, patient_pkey, clientKey) {
+        return m.request({
+            method: "GET",
+            url: "/api/investigators/import_to_trial_data/" + patient_pkey + "/" + id,
             headers: {
                 'ClientKey': clientKey
             },
-            data: dataList,
-            useBody: true,
+//            data: dataList,
+//            useBody: true,
 //            withCredentials: true,
         })
         .then(function(items) {
@@ -138,6 +159,27 @@ var Investigator = {
             Investigator.error = e.message
         })
     },
+
+//    import_screening_data: function(dataList, clientKey) {
+//        return m.request({
+//            method: "POST",
+//            url: "/api/investigators/import_screening_data",
+//            headers: {
+//                'ClientKey': clientKey
+//            },
+//            data: dataList,
+//            useBody: true,
+////            withCredentials: true,
+//        })
+//        .then(function(items) {
+////            Data.todos.list = items
+//            Investigator.error = ""
+//        })
+//        .catch(function(e) {
+//            console.log(e)
+//            Investigator.error = e.message
+//        })
+//    },
 
     update_trial_data: function(clientKey) {
         return m.request({

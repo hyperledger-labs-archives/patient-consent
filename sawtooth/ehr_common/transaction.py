@@ -214,6 +214,7 @@ def create_investigator(txn_signer, batch_signer, name):
 #         txn_signer=txn_signer,
 #         batch_signer=batch_signer)
 
+
 def add_data(txn_signer, batch_signer, uid, height, weight, a1c, fpg, ogtt, rpgt, event_time):
     # LOGGER.debug('data: ' + str(data))
     investigator_pkey = txn_signer.get_public_key().as_hex()

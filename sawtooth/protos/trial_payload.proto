@@ -10,9 +10,9 @@ message TrialTransactionPayload {
         CREATE_HOSPITAL = 4;
         CREATE_EHR = 5;
 //        CREATE_DATA_PROVIDER = 6;
-        IMPORT_DATA = 7;
-        UPDATE_DATA = 8;
-        SET_ELIGIBLE = 9;
+//        IMPORT_DATA = 7;
+//        UPDATE_DATA = 8;
+//        SET_ELIGIBLE = 9;
 //        NEXT_VISIT = 10;
 //        ADD_LAB_TEST = 11;
 //        ADD_PULSE = 12;
@@ -29,9 +29,9 @@ message TrialTransactionPayload {
 //    DataProvider create_data_provider = 5;
     Sponsor create_sponsor = 6;
     Investigator create_investigator = 7;
-    Data import_data = 8;
-    Data update_data = 9;
-    Data set_eligible = 10;
+//    Data import_data = 8;
+//    Data update_data = 9;
+//    Data set_eligible = 10;
 //    Claim create_claim = 5;
 //    ActionOnClaim assign_doctor = 6;
 //    ActionOnClaim first_visit = 7;
@@ -83,10 +83,10 @@ message EHRWithUser {
     string surname=11;
 }
 
-message DataProvider {
-    string public_key = 1;
-    string name = 2;
-}
+//message DataProvider {
+//    string public_key = 1;
+//    string name = 2;
+//}
 
 message Data {
     string id=1;
