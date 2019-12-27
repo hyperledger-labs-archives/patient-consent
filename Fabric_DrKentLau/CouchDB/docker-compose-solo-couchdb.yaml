@@ -72,8 +72,8 @@ services:
     container_name: couchdb.peer0.patient.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.patient.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.patient.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "5984:5984"
     networks:
@@ -83,8 +83,8 @@ services:
     container_name: couchdb.peer1.patient.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.patient.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.patient.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "6984:5984"
     networks:
@@ -96,8 +96,8 @@ services:
     container_name: couchdb.peer0.datamanagement.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.datamanagement.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.datamanagement.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "7984:5984"
     networks:
@@ -107,8 +107,8 @@ services:
     container_name: couchdb.peer1.datamanagement.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.datamanagement.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.datamanagement.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "8984:5984"
     networks:
@@ -120,8 +120,8 @@ services:
     container_name: couchdb.peer0.oversight.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.oversight.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.oversight.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "9984:5984"
     networks:
@@ -131,8 +131,8 @@ services:
     container_name: couchdb.peer1.oversight.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.oversight.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.oversight.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "10984:5984"
     networks:
@@ -143,8 +143,8 @@ services:
     container_name: couchdb.peer0.investigator.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.investigator.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.investigator.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "11984:5984"
     networks:
@@ -154,8 +154,8 @@ services:
     container_name: couchdb.peer1.investigator.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.investigator.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.investigator.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "12984:5984"
     networks:
@@ -166,8 +166,8 @@ services:
     container_name: couchdb.peer0.cro.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.cro.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.cro.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "13984:5984"
     networks:
@@ -177,8 +177,8 @@ services:
     container_name: couchdb.peer1.cro.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.cro.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.cro.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "14984:5984"
     networks:
@@ -190,8 +190,8 @@ services:
     container_name: couchdb.peer0.sponsor.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer0.sponsor.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer0.sponsor.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "15984:5984"
     networks:
@@ -201,8 +201,8 @@ services:
     container_name: couchdb.peer1.sponsor.com
     image: hyperledger/fabric-couchdb
     environment:
-      - COUCHDB_USER=​peer1.sponsor.com
-      - COUCHDB_PASSWORD=​password
+      - COUCHDB_USER=peer1.sponsor.com
+      - COUCHDB_PASSWORD=password
     ports:
       - "16984:5984"
     networks:
