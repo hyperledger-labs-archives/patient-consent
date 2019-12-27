@@ -11,7 +11,7 @@ message ConsentTransactionPayload {
         REVOKE_DATA_PROCESSING_ACCESS = 5;
         SIGN_INFORM_CONSENT = 6;
         REQUEST_INFORM_CONSENT = 7;
-//        GRANT_INVESTIGATOR_ACCESS_ACTION = 8;
+        DECLINE_INFORM_CONSENT = 8;
 //        REVOKE_INVESTIGATOR_ACCESS_ACTION = 9;
     }
 
@@ -24,7 +24,7 @@ message ConsentTransactionPayload {
     ActionOnAccess revoke_data_processing_access = 6;
     ActionOnAccess sign_inform_document_consent = 7;
     ActionOnAccess request_inform_document_consent = 8;
-//    ActionOnAccess grant_share_shared_ehr_access = 9;
+    ActionOnAccess decline_inform_consent = 9;
 //    ActionOnAccess revoke_share_shared_ehr_access = 10;
 }
 
@@ -54,6 +54,10 @@ message Permission {
       GRANT_WRITE_DATA_ACCESS = 204;
       REVOKE_WRITE_DATA_ACCESS = 205;
       SIGN_INFORM_CONSENT = 206;
+      DECLINE_INFORM_CONSENT = 207;
+      READ_INFORM_CONSENT_REQUEST = 208;
+      READ_SIGNED_INFORM_CONSENT = 209;
+
 
       READ_INVESTIGATOR = 300;
       READ_OWN_INVESTIGATOR = 301;

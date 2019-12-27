@@ -131,6 +131,17 @@ async def add_patient(conn, timeout, batches):
 #         return await messaging.get_state_by_address(conn, list_patient_address)
 #     raise ApiForbidden("Insufficient permission")
 
+
+async def get_inform_consent_request_list(conn, client_key):
+    client = await get_client(conn, client_key)
+    if Permission(type=Permission.READ_INFORM_CONSENT_REQUEST) in client.permissions and \
+            Permission(type=Permission.READ_SIGNED_INFORM_CONSENT) in client.permissions:
+        LOGGER.debug('has READ_INFORM_CONSENT_REQUEST and READ_SIGNED_INFORM_CONSENT permission: ' + str(client_key))
+        inform_consent_request_list = await get_inform_consent_request(conn, client_key)
+        return inform_consent_request_list
+    raise ApiForbidden("Insufficient permission")
+
+
 async def get_patients(conn, client_key):
     client = await get_client(conn, client_key)
     patient_list = {}
@@ -342,6 +353,16 @@ async def sign_inform_document_consent(conn, timeout, batches, client_key):
     raise ApiForbidden("Insufficient permission")
 
 
+async def decline_inform_consent(conn, timeout, batches, client_key):
+    client = await get_client(conn, client_key)
+    if Permission(type=Permission.DECLINE_INFORM_CONSENT) in client.permissions:
+        LOGGER.debug('has permission: True')
+        await _send(conn, timeout, batches)
+        return
+    else:
+        LOGGER.debug('has permission: False')
+    raise ApiForbidden("Insufficient permission")
+
 # async def grant_share_ehr_access(conn, timeout, batches, client_key):
 #     client = await get_client(conn, client_key)
 #     if Permission(type=Permission.GRANT_3RD_PARTY_ACCESS) in client.permissions:
@@ -426,6 +447,37 @@ async def has_data_processing_access(conn, dest_pkey, src_pkey):  # dest_pkey - 
 #             LOGGER.debug('has consent!')
 #             return True
 #     return False
+
+async def get_inform_consent_request(conn, client_key):
+    request_inform_consent_list_address = \
+        consent_helper.make_request_inform_document_consent_list_address_by_destination_client(client_key)
+    LOGGER.debug('request_inform_consent_list_address: ' + str(request_inform_consent_list_address))
+    request_inform_consent_list_resources = \
+        await messaging.get_state_by_address(conn, request_inform_consent_list_address)
+    LOGGER.debug('request_inform_consent_list_resources: ' + str(request_inform_consent_list_resources))
+    request_inform_consent_list = {}
+    for entity in request_inform_consent_list_resources.entries:
+        aoa = ActionOnAccess()
+        aoa.ParseFromString(entity.data)
+        request_inform_consent_list[entity.address] = aoa
+        LOGGER.debug('request inform consent: ' + str(aoa))
+    return request_inform_consent_list
+
+
+async def get_signed_inform_consent(conn, client_key):
+    signed_inform_consent_list_address = \
+        consent_helper.make_sign_inform_document_consent_list_address_by_destination_client(client_key)
+    LOGGER.debug('signed_inform_consent_list_address: ' + str(signed_inform_consent_list_address))
+    signed_inform_consent_list_resources = \
+        await messaging.get_state_by_address(conn, signed_inform_consent_list_address)
+    LOGGER.debug('signed_inform_consent_list_resources: ' + str(signed_inform_consent_list_resources))
+    signed_inform_consent_list = {}
+    for entity in signed_inform_consent_list_resources.entries:
+        aoa = ActionOnAccess()
+        aoa.ParseFromString(entity.data)
+        signed_inform_consent_list[entity.address] = aoa
+        LOGGER.debug('signed inform consent: ' + str(aoa))
+    return signed_inform_consent_list
 
 
 async def get_data_processing_access(conn, client_key):

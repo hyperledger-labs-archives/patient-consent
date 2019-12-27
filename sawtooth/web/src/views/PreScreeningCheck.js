@@ -37,16 +37,12 @@ module.exports = {
 //                        EHR.update(vnode.attrs.client_key)
 //                    }
 //                }, 'Update claim'),
-//                m("div"),
-//                m("button", {
-//                    onclick: function() {
-//                        Claim.current.claim_id = claim.id
-//                        Claim.current.client_pkey = claim.client_pkey
-////                        Claim.current.provided_service = "pills, lab tests"
-//                        Claim.current.contract_id = claim.contract_id
-//                        Claim.close(vnode.attrs.client_key)
-//                    }
-//                }, 'Close claim')
+                m("div"),
+                m("button", {
+                    onclick: function() {
+                        Investigator.import_to_trial_data(ehr.id, ehr.client_pkey, vnode.attrs.client_key)
+                    }
+                }, 'Import to trial data')
                 )
             }),
 //        m("label.label", "Provided Service"),

@@ -54,6 +54,13 @@ class ConsentPayload(object):
         return self._transaction.payload_type == \
                consent_payload_pb2.ConsentTransactionPayload.SIGN_INFORM_CONSENT
 
+    def decline_inform_consent(self):
+        return self._transaction.decline_inform_consent
+
+    def is_decline_inform_consent(self):
+        return self._transaction.payload_type == \
+               consent_payload_pb2.ConsentTransactionPayload.DECLINE_INFORM_CONSENT
+
     def request_inform_consent(self):
         return self._transaction.request_inform_document_consent
 

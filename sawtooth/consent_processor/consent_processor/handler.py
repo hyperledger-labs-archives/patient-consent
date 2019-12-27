@@ -68,6 +68,10 @@ class ConsentTransactionHandler(TransactionHandler):
                 LOGGER.debug("is_sign_inform_consent")
                 access = consent_payload.sign_inform_consent()
                 consent_state.sign_inform_document_consent(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
+            elif consent_payload.is_decline_inform_consent():
+                LOGGER.debug("is_decline_inform_consent")
+                access = consent_payload.decline_inform_consent()
+                consent_state.decline_inform_consent(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
             elif consent_payload.is_request_inform_consent():
                 LOGGER.debug("is_request_inform_consent")
                 access = consent_payload.request_inform_consent()

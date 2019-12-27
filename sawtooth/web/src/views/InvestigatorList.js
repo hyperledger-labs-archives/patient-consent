@@ -16,12 +16,12 @@ module.exports = {
         return m(".user-list", Investigator.list.map(function(investigator) {
             return m("a.user-list-item", "PUBLIC KEY: " + investigator.public_key + "; NAME: " + investigator.name,
                     m("div"),
-                    m("button", {
-                        onclick: function() {
-                            qrcodeurl='https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=' + investigator.public_key + '&chld=H|0'
-                        }
-                    }, 'Generate QR code for Investigator Public Key: ' + investigator.public_key),
-                    m("div"),
+//                    m("button", {
+//                        onclick: function() {
+//                            qrcodeurl='https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=' + investigator.public_key + '&chld=H|0'
+//                        }
+//                    }, 'Generate QR code for Investigator Public Key: ' + investigator.public_key),
+//                    m("div"),
                     m("button", {
                         onclick: function() {
                             Investigator.grant_investigator_access(investigator.public_key, vnode.attrs.client_key)

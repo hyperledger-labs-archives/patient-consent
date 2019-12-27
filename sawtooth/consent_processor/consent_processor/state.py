@@ -26,6 +26,9 @@ class ConsentState(object):
     def sign_inform_document_consent(self, dest_pkey, src_pkey):
         self._store_sign_inform_consent(dest_pkey, src_pkey)
 
+    def decline_inform_consent(self, dest_pkey, src_pkey):
+        self._decline_sign_inform_consent(dest_pkey, src_pkey)
+
     def grant_data_processing_access(self, dest_pkey, src_pkey):
         self._store_data_processing_access(dest_pkey, src_pkey)
 
@@ -191,6 +194,14 @@ class ConsentState(object):
         state_data = sign_inform_consent.SerializeToString()
         self._context.set_state(
             {sign_inform_consent_address: state_data},
+            timeout=self.TIMEOUT)
+
+    def _decline_sign_inform_consent(self, dest_pkey, src_pkey):
+        request_inform_consent_address = \
+            helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+        self._context.delete_state(
+            [request_inform_consent_address],
             timeout=self.TIMEOUT)
 
     def _store_data_processing_access(self, dest_pkey, src_pkey):

@@ -94,6 +94,23 @@ async def get_all_patients(request):
                          headers=general.get_response_headers())
 
 
+@PATIENTS_BP.get('patients/inform_consent_request_list')
+async def inform_consent_request_list(request):
+    """Fetches complete details of all Accounts in state"""
+    client_key = general.get_request_key_header(request)
+    inform_consent_list = \
+        await security_messaging.get_inform_consent_request_list(request.app.config.VAL_CONN, client_key)
+    inform_consent_list_json = []
+    for address, inf_con in inform_consent_list.items():
+        inform_consent_list_json.append({
+            'src_pkey': inf_con.src_pkey,
+            'dest_pkey': inf_con.dest_pkey
+        })
+
+    return response.json(body={'data': inform_consent_list_json},
+                         headers=general.get_response_headers())
+
+
 @PATIENTS_BP.post('patients')
 async def register_new_patient(request):
     """Updates auth information for the authorized account"""
@@ -180,6 +197,64 @@ async def revoke_data_processing(request, dest_pkey):
     batch, batch_id = ehr_transaction.make_batch_and_id([revoke_data_processing_txn], client_signer)
 
     await security_messaging.revoke_data_processing(
+        request.app.config.VAL_CONN,
+        request.app.config.TIMEOUT,
+        [batch], client_key)
+
+    try:
+        await security_messaging.check_batch_status(
+            request.app.config.VAL_CONN, [batch_id])
+    except (ApiBadRequest, ApiInternalError) as err:
+        # await auth_query.remove_auth_entry(
+        #     request.app.config.DB_CONN, request.json.get('email'))
+        raise err
+
+    return response.json(body={'status': general.DONE},
+                         headers=general.get_response_headers())
+
+
+@PATIENTS_BP.get('patients/sign_inform_consent/<investigator_pkey>')
+async def sign_inform_consent(request, investigator_pkey):
+    """Updates auth information for the authorized account"""
+    client_key = general.get_request_key_header(request)
+    client_signer = general.get_signer(request, client_key)
+    grant_read_ehr_permission_txn = consent_transaction.sign_inform_document_consent(
+        txn_signer=client_signer,
+        batch_signer=client_signer,
+        investigator_pkey=investigator_pkey)
+
+    batch, batch_id = ehr_transaction.make_batch_and_id([grant_read_ehr_permission_txn], client_signer)
+
+    await security_messaging.sign_inform_document_consent(
+        request.app.config.VAL_CONN,
+        request.app.config.TIMEOUT,
+        [batch], client_key)
+
+    try:
+        await security_messaging.check_batch_status(
+            request.app.config.VAL_CONN, [batch_id])
+    except (ApiBadRequest, ApiInternalError) as err:
+        # await auth_query.remove_auth_entry(
+        #     request.app.config.DB_CONN, request.json.get('email'))
+        raise err
+
+    return response.json(body={'status': general.DONE},
+                         headers=general.get_response_headers())
+
+
+@PATIENTS_BP.get('patients/decline_inform_consent/<investigator_pkey>')
+async def decline_inform_consent(request, investigator_pkey):
+    """Updates auth information for the authorized account"""
+    client_key = general.get_request_key_header(request)
+    client_signer = general.get_signer(request, client_key)
+    revoke_data_processing_txn = consent_transaction.decline_inform_consent(
+        txn_signer=client_signer,
+        batch_signer=client_signer,
+        investigator_pkey=investigator_pkey)
+
+    batch, batch_id = ehr_transaction.make_batch_and_id([revoke_data_processing_txn], client_signer)
+
+    await security_messaging.decline_inform_consent(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
         [batch], client_key)
