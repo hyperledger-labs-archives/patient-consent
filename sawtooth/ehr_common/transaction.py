@@ -5,7 +5,11 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchHeader, Batch
 from sawtooth_sdk.protobuf.transaction_pb2 import Transaction, TransactionHeader
 
 from . import helper as helper
+<<<<<<< HEAD
 from .protobuf.trial_payload_pb2 import EHR, TrialTransactionPayload, Hospital, Patient, Investigator, Data
+=======
+from .protobuf.trial_payload_pb2 import EHR, TrialTransactionPayload, Hospital, Patient, DataProvider
+>>>>>>> upstream/master
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -141,6 +145,7 @@ def create_hospital(txn_signer, batch_signer, name):
         batch_signer=batch_signer)
 
 
+<<<<<<< HEAD
 def create_investigator(txn_signer, batch_signer, name):
     investigator_pkey = txn_signer.get_public_key().as_hex()
     LOGGER.debug('investigator_pkey: ' + str(investigator_pkey))
@@ -153,6 +158,20 @@ def create_investigator(txn_signer, batch_signer, name):
     payload = TrialTransactionPayload(
         payload_type=TrialTransactionPayload.CREATE_INVESTIGATOR,
         create_investigator=investigator)
+=======
+def create_data_provider(txn_signer, batch_signer, name):
+    data_provider_pkey = txn_signer.get_public_key().as_hex()
+    LOGGER.debug('data_provider_pkey: ' + str(data_provider_pkey))
+    inputs = outputs = helper.make_data_provider_address(data_provider_pkey=data_provider_pkey)
+    LOGGER.debug('inputs: ' + str(inputs))
+    data_provider = DataProvider(
+        public_key=data_provider_pkey,
+        name=name)
+
+    payload = TrialTransactionPayload(
+        payload_type=TrialTransactionPayload.CREATE_DATA_PROVIDER,
+        create_data_provider=data_provider)
+>>>>>>> upstream/master
 
     return _make_transaction(
         payload=payload,
@@ -215,6 +234,7 @@ def create_investigator(txn_signer, batch_signer, name):
 #         batch_signer=batch_signer)
 
 
+<<<<<<< HEAD
 def add_data(txn_signer, batch_signer, uid, height, weight, a1c, fpg, ogtt, rpgt, event_time):
     # LOGGER.debug('data: ' + str(data))
     investigator_pkey = txn_signer.get_public_key().as_hex()
@@ -308,6 +328,9 @@ def set_eligible(txn_signer, batch_signer, uid, eligible):
 
 
 def add_ehr(txn_signer, batch_signer, uid, client_pkey, height, weight, a1c, fpg, ogtt, rpgt):
+=======
+def add_ehr(txn_signer, batch_signer, uid, client_pkey, field_1, field_2):
+>>>>>>> upstream/master
     hospital_pkey = txn_signer.get_public_key().as_hex()
     patient_pkey = client_pkey
     # patient_hex = helper.make_patient_address(patient_pkey=client_pkey)
@@ -324,12 +347,17 @@ def add_ehr(txn_signer, batch_signer, uid, client_pkey, height, weight, a1c, fpg
     ehr = EHR(
         id=uid,
         client_pkey=client_pkey,
+<<<<<<< HEAD
         height=height,
         weight=weight,
         A1C=a1c,
         FPG=fpg,
         OGTT=ogtt,
         RPGT=rpgt,
+=======
+        field_1=field_1,
+        field_2=field_2,
+>>>>>>> upstream/master
         event_time=str(current_times_str)
     )
 

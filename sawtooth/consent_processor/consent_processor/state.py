@@ -14,6 +14,7 @@ class ConsentState(object):
 
         self._context = context
 
+<<<<<<< HEAD
     def request_inform_document_consent(self, dest_pkey, src_pkey):
         self._store_request_inform_document_consent(dest_pkey, src_pkey)
 
@@ -67,6 +68,57 @@ class ConsentState(object):
 
     def _load_investigator_access(self, dest_pkey, src_pkey):
         access_hex = [helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+=======
+    def grant_read_ehr_access(self, dest_pkey, src_pkey):
+        self._store_read_ehr_access(dest_pkey, src_pkey)
+
+    def revoke_read_ehr_access(self, dest_pkey, src_pkey):
+        self._revoke_read_ehr_access(dest_pkey, src_pkey)
+
+    def grant_write_ehr_access(self, dest_pkey, src_pkey):
+        self._store_write_ehr_access(dest_pkey, src_pkey)
+
+    def revoke_write_ehr_access(self, dest_pkey, src_pkey):
+        self._revoke_write_ehr_access(dest_pkey, src_pkey)
+
+    def grant_share_ehr_access(self, dest_pkey, src_pkey):
+        self._store_share_ehr_access(dest_pkey, src_pkey)
+
+    def revoke_share_ehr_access(self, dest_pkey, src_pkey):
+        self._revoke_share_ehr_access(dest_pkey, src_pkey)
+
+    def grant_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        self._store_share_shared_ehr_access(dest_pkey, src_pkey)
+
+    def revoke_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        self._revoke_share_shared_ehr_access(dest_pkey, src_pkey)
+
+    def has_read_ehr_access(self, dest_pkey, src_pkey):
+        return self._load_read_ehr_access(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+    def has_write_ehr_access(self, dest_pkey, src_pkey):
+        return self._load_write_ehr_access(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+    def has_share_ehr_access(self, dest_pkey, src_pkey):
+        return self._load_share_ehr_access(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+    def has_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        return self._load_share_shared_ehr_access(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+    def get_read_ehr_access_by_destination(self, dest_pkey):
+        return self._load_read_ehr_access_by_destination(dest_pkey=dest_pkey)
+
+    def get_write_ehr_access_by_destination(self, dest_pkey):
+        return self._load_write_ehr_access_by_destination(dest_pkey=dest_pkey)
+
+    def get_share_ehr_access_by_destination(self, dest_pkey):
+        return self._load_share_ehr_access_by_destination(dest_pkey=dest_pkey)
+
+    def get_share_shared_ehr_access_by_destination(self, dest_pkey):
+        return self._load_share_shared_ehr_access_by_destination(dest_pkey=dest_pkey)
+
+    def _load_read_ehr_access(self, dest_pkey, src_pkey):
+        access_hex = [helper.make_consent_read_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
         state_entries = self._context.get_state(
             access_hex,
             timeout=self.TIMEOUT)
@@ -76,8 +128,47 @@ class ConsentState(object):
             return access
         return None
 
+    def _load_write_ehr_access(self, dest_pkey, src_pkey):
+        access_hex = [helper.make_consent_write_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+        state_entries = self._context.get_state(
+            access_hex,
+            timeout=self.TIMEOUT)
+        if state_entries:
+            access = consent_payload_pb2.ActionOnAccess()
+            access.ParseFromString(state_entries[0].data)
+            return access
+        return None
+
+    def _load_share_ehr_access(self, dest_pkey, src_pkey):
+        access_hex = [helper.make_consent_share_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+        state_entries = self._context.get_state(
+            access_hex,
+            timeout=self.TIMEOUT)
+        if state_entries:
+            access = consent_payload_pb2.ActionOnAccess()
+            access.ParseFromString(state_entries[0].data)
+            return access
+        return None
+
+    def _load_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        access_hex = [helper.make_consent_share_shared_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+>>>>>>> upstream/master
+        state_entries = self._context.get_state(
+            access_hex,
+            timeout=self.TIMEOUT)
+        if state_entries:
+            access = consent_payload_pb2.ActionOnAccess()
+            access.ParseFromString(state_entries[0].data)
+            return access
+        return None
+
+<<<<<<< HEAD
     def _load_inform_consent(self, dest_pkey, src_pkey):
         access_hex = [helper.make_sign_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+=======
+    def _load_read_ehr_access_by_destination(self, dest_pkey):
+        access_hex = [helper.make_consent_read_ehr_list_address_by_destination_client(dest_pkey=dest_pkey)]
+>>>>>>> upstream/master
         state_entries = self._context.get_state(
             access_hex,
             timeout=self.TIMEOUT)
@@ -87,8 +178,13 @@ class ConsentState(object):
             return access
         return None
 
+<<<<<<< HEAD
     def _load_data_processing_access(self, dest_pkey, src_pkey):
         access_hex = [helper.make_data_processing_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
+=======
+    def _load_write_ehr_access_by_destination(self, dest_pkey):
+        access_hex = [helper.make_consent_write_ehr_list_address_by_destination_client(dest_pkey=dest_pkey)]
+>>>>>>> upstream/master
         state_entries = self._context.get_state(
             access_hex,
             timeout=self.TIMEOUT)
@@ -98,6 +194,7 @@ class ConsentState(object):
             return access
         return None
 
+<<<<<<< HEAD
     # def _load_share_shared_ehr_access(self, dest_pkey, src_pkey):
     #     access_hex = [helper.make_consent_share_shared_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)]
     #     state_entries = self._context.get_state(
@@ -155,6 +252,32 @@ class ConsentState(object):
 
     def _store_investigator_access(self, dest_pkey, src_pkey):
         address = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+=======
+    def _load_share_ehr_access_by_destination(self, dest_pkey):
+        access_hex = [helper.make_consent_share_ehr_list_address_by_destination_client(dest_pkey=dest_pkey)]
+        state_entries = self._context.get_state(
+            access_hex,
+            timeout=self.TIMEOUT)
+        if state_entries:
+            access = consent_payload_pb2.ActionOnAccess()
+            access.ParseFromString(state_entries[0].data)
+            return access
+        return None
+
+    def _load_share_shared_ehr_access_by_destination(self, dest_pkey):
+        access_hex = [helper.make_consent_share_shared_ehr_list_address_by_destination_client(dest_pkey=dest_pkey)]
+        state_entries = self._context.get_state(
+            access_hex,
+            timeout=self.TIMEOUT)
+        if state_entries:
+            access = consent_payload_pb2.ActionOnAccess()
+            access.ParseFromString(state_entries[0].data)
+            return access
+        return None
+
+    def _store_read_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_read_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+>>>>>>> upstream/master
 
         access = consent_payload_pb2.ActionOnAccess()
         access.dest_pkey = dest_pkey
@@ -165,8 +288,13 @@ class ConsentState(object):
             {address: state_data},
             timeout=self.TIMEOUT)
 
+<<<<<<< HEAD
     def _store_request_inform_document_consent(self, dest_pkey, src_pkey):
         address = helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+=======
+    def _store_write_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_write_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+>>>>>>> upstream/master
 
         access = consent_payload_pb2.ActionOnAccess()
         access.dest_pkey = dest_pkey
@@ -177,6 +305,7 @@ class ConsentState(object):
             {address: state_data},
             timeout=self.TIMEOUT)
 
+<<<<<<< HEAD
     def _store_sign_inform_consent(self, dest_pkey, src_pkey):
         request_inform_consent_address = \
             helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
@@ -206,6 +335,9 @@ class ConsentState(object):
 
     def _store_data_processing_access(self, dest_pkey, src_pkey):
         address = helper.make_data_processing_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+=======
+    def _store_share_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_share_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
 
         access = consent_payload_pb2.ActionOnAccess()
         access.dest_pkey = dest_pkey
@@ -216,20 +348,51 @@ class ConsentState(object):
             {address: state_data},
             timeout=self.TIMEOUT)
 
+    def _store_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_share_shared_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+>>>>>>> upstream/master
+
+        access = consent_payload_pb2.ActionOnAccess()
+        access.dest_pkey = dest_pkey
+        access.src_pkey = src_pkey
+
+        state_data = access.SerializeToString()
+        self._context.set_state(
+            {address: state_data},
+            timeout=self.TIMEOUT)
+
+<<<<<<< HEAD
     def _revoke_investigator_access(self, dest_pkey, src_pkey):
         address = helper.make_investigator_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+=======
+    def _revoke_read_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_read_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
 
         self._context.delete_state(
             [address],
             timeout=self.TIMEOUT)
 
+    def _revoke_write_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_write_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+>>>>>>> upstream/master
+
+        self._context.delete_state(
+            [address],
+            timeout=self.TIMEOUT)
+
+<<<<<<< HEAD
     def _revoke_data_processing_access(self, dest_pkey, src_pkey):
         address = helper.make_data_processing_access_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+=======
+    def _revoke_share_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_share_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+>>>>>>> upstream/master
 
         self._context.delete_state(
             [address],
             timeout=self.TIMEOUT)
 
+<<<<<<< HEAD
     # def _revoke_share_ehr_access(self, dest_pkey, src_pkey):
     #     address = helper.make_consent_share_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
     #
@@ -243,6 +406,14 @@ class ConsentState(object):
     #     self._context.delete_state(
     #         [address],
     #         timeout=self.TIMEOUT)
+=======
+    def _revoke_share_shared_ehr_access(self, dest_pkey, src_pkey):
+        address = helper.make_consent_share_shared_ehr_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
+        self._context.delete_state(
+            [address],
+            timeout=self.TIMEOUT)
+>>>>>>> upstream/master
 
     def create_client(self, client):
         address = helper.make_client_address(public_key=client.public_key)

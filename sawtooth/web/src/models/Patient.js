@@ -2,7 +2,10 @@ var m = require("mithril")
 
 var Patient = {
     list: [],
+<<<<<<< HEAD
     informConsentRequestList: [],
+=======
+>>>>>>> upstream/master
     error: "",
     loadList: function(clientKey) {
         return m.request({
@@ -24,6 +27,7 @@ var Patient = {
         })
     },
 
+<<<<<<< HEAD
     inform_consent_request_list: function(clientKey) {   //i.e Investigator
         return m.request({
             method: "GET",
@@ -86,6 +90,8 @@ var Patient = {
         })
     },
 
+=======
+>>>>>>> upstream/master
     current: {},
 
     register: function() {

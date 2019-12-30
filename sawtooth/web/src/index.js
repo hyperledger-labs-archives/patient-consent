@@ -14,6 +14,7 @@ var PatientForm = require("./views/PatientForm")
 var HospitalList = require("./views/HospitalList")
 var HospitalForm = require("./views/HospitalForm")
 
+<<<<<<< HEAD
 var InvestigatorList = require("./views/InvestigatorList")
 var InvestigatorForm = require("./views/InvestigatorForm")
 var TrialDataList = require("./views/TrialDataList")
@@ -22,6 +23,15 @@ var EHRList = require("./views/EHRList")
 var EHRNewForm = require("./views/EHRNewForm")
 var PreScreeningCheckForm = require("./views/PreScreeningCheck")
 var InformConsentRequestList = require("./views/InformConsentRequestList")
+=======
+var DataProviderList = require("./views/DataProviderList")
+var DataProviderForm = require("./views/DataProviderForm")
+
+var EHRList = require("./views/EHRList")
+var EHRNewForm = require("./views/EHRNewForm")
+//var ClaimDetailsForm = require("./views/ClaimDetailsForm")
+
+>>>>>>> upstream/master
 //var LabTestsList = require("./views/LabTestsList")
 //var LabTestForm = require("./views/LabTestForm")
 //
@@ -47,7 +57,11 @@ var InformConsentRequestList = require("./views/InformConsentRequestList")
 var HospitalActionsList = require("./views/HospitalActionsList")
 var PatientActionsList = require("./views/PatientActionsList")
 //var LabActionsList = require("./views/LabActionsList")
+<<<<<<< HEAD
 var InvestigatorActionsList = require("./views/InvestigatorActionsList")
+=======
+var DataProviderActionsList = require("./views/DataProviderActionsList")
+>>>>>>> upstream/master
 var Layout = require("./views/Layout")
 
 m.route(document.body, "/hospital", {
@@ -88,6 +102,7 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(HospitalForm))
         }
     },
+<<<<<<< HEAD
     "/investigator_list/": {
         render: function(vnode) {
             return m(Layout, m(InvestigatorList, vnode.attrs))
@@ -96,6 +111,16 @@ m.route(document.body, "/hospital", {
     "/investigator/new/": {
         render: function() {
             return m(Layout, m(InvestigatorForm))
+=======
+    "/data_provider_list/": {
+        render: function(vnode) {
+            return m(Layout, m(DataProviderList, vnode.attrs))
+        }
+    },
+    "/data_provider/new/": {
+        render: function() {
+            return m(Layout, m(DataProviderForm))
+>>>>>>> upstream/master
         }
     },
     "/ehr_list": {
@@ -103,6 +128,7 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(EHRList, vnode.attrs))
         }
     },
+<<<<<<< HEAD
     "/trial_data_list": {
         render: function(vnode) {
             return m(Layout, m(TrialDataList, vnode.attrs))
@@ -118,6 +144,23 @@ m.route(document.body, "/hospital", {
             return m(Layout, m(InformConsentRequestList, vnode.attrs))
         }
     },
+=======
+//    "/doctor/assign/": {
+//        render: function() {
+//            return m(Layout, m(DoctorAssignForm))
+//        }
+//    },
+//    "/first_visit/": {
+//        render: function() {
+//            return m(Layout, m(FirstVisitForm))
+//        }
+//    },
+//    "/eat_pills/": {
+//        render: function() {
+//            return m(Layout, m(EatPillsForm))
+//        }
+//    },
+>>>>>>> upstream/master
 //    "/pass_tests/": {
 //        render: function() {
 //            return m(Layout, m(PassTestsForm))
@@ -178,11 +221,19 @@ m.route(document.body, "/hospital", {
 //            return m(Layout, m(ContractForm, vnode.attrs))
 //        }
 //    },
+<<<<<<< HEAD
 //    "/patient/:patient_pkey": {
 //        render: function(vnode) {
 //            return m(Layout, m(PatientDetailsForm, vnode.attrs))
 //        }
 //    },
+=======
+    "/patient/:patient_pkey": {
+        render: function(vnode) {
+            return m(Layout, m(PatientDetailsForm, vnode.attrs))
+        }
+    },
+>>>>>>> upstream/master
     "/hospital": {
         render: function() {
             return m(Layout, m(HospitalActionsList))
@@ -203,9 +254,15 @@ m.route(document.body, "/hospital", {
 //            return m(Layout, m(LabActionsList))
 //        }
 //    },
+<<<<<<< HEAD
     "/investigator": {
         render: function() {
             return m(Layout, m(InvestigatorActionsList))
+=======
+    "/data_provider": {
+        render: function() {
+            return m(Layout, m(DataProviderActionsList))
+>>>>>>> upstream/master
         }
     },
 //    "/lab_list/": {

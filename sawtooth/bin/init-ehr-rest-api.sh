@@ -21,8 +21,13 @@ if [[ ! -f /root/.sawtooth/keys/patientWEB.priv ]]; then
     sawtooth keygen patientWEB
 fi;
 
+<<<<<<< HEAD
 if [[ ! -f /root/.sawtooth/keys/investigatorWEB.priv ]]; then
     sawtooth keygen investigatorWEB
+=======
+if [[ ! -f /root/.sawtooth/keys/dataproviderWEB.priv ]]; then
+    sawtooth keygen dataproviderWEB
+>>>>>>> upstream/master
 fi;
 #if [[ ! -f /root/.sawtooth/keys/labWEB.priv ]]; then
 #    sawtooth keygen labWEB

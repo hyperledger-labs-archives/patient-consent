@@ -2,7 +2,10 @@ var m = require("mithril")
 
 var EHR = {
     list: [],
+<<<<<<< HEAD
     sharedDataList: [],
+=======
+>>>>>>> upstream/master
     error: "",
     loadList: function(clientKey) {
         return m.request({
@@ -23,6 +26,7 @@ var EHR = {
         })
     },
 
+<<<<<<< HEAD
     screening_data: function(investigatorPKey, inclExclCriteria) {   //i.e Investigator
         return m.request({
             method: "GET",
@@ -43,6 +47,8 @@ var EHR = {
         })
     },
 
+=======
+>>>>>>> upstream/master
     current: {},
 
 //    close: function(clientKey) {
