@@ -684,7 +684,7 @@ async def get_shared_ehrs(conn, investigator_pkey):
 async def get_data_from_investigators(conn, client_key):
     client = await get_client(conn, client_key)
     data_list = {}
-    if Permission(type=Permission.READ_DATA) in client.permissions:
+    if Permission(type=Permission.READ_TRIAL_DATA) in client.permissions:
         data_list_address = ehr_helper.make_investigator_data_list_address()
         LOGGER.debug('has READ_DATA permission: ' + str(client_key))
         data_list_resources = await messaging.get_state_by_address(conn, data_list_address)
@@ -787,7 +787,7 @@ async def get_ehr_by_id(conn, client_key, ehr_id):
                     ehr_list[claim_address] = e
         if not ehr_list:
             raise ApiForbidden("Cat not get EHR having '" + str(ehr_id) + "' id")
-        return ehr_list.values()[0]
+        return list(ehr_list.values())[0]
     elif Permission(type=Permission.READ_OWN_PATIENT_DATA) in client.permissions:
         # ehr_list_ids_address = ehr_helper.make_ehr_list_by_patient_address(client_key)
         LOGGER.debug('has READ_OWN_PATIENT_DATA permission: ' + str(client_key))
@@ -804,7 +804,7 @@ async def get_ehr_by_id(conn, client_key, ehr_id):
             ehr_list[entity.address] = e
         if not ehr_list:
             raise ApiForbidden("Cat not get EHR having '" + str(ehr_id) + "' id")
-        return ehr_list.values()[0]
+        return list(ehr_list.values())[0]
     else:
         LOGGER.debug('neither READ_PATIENT_DATA nor READ_OWN_PATIENT_DATA permissions')
     raise ApiForbidden("Insufficient permission")
