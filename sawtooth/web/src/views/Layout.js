@@ -17,11 +17,7 @@ module.exports = {
                 m("a", {href: "/hospital", oncreate: m.route.link}, "As Hospital|"),
 //                m("a", {href: "/doctor", oncreate: m.route.link}, "As Doctor|"),
                 m("a", {href: "/patient", oncreate: m.route.link}, "As Patient|"),
-<<<<<<< HEAD
                 m("a", {href: "/investigator", oncreate: m.route.link}, "As Investigator|"),
-=======
-                m("a", {href: "/data_provider", oncreate: m.route.link}, "As Data Provider|"),
->>>>>>> upstream/master
 //                m("a", {href: "/insurance", oncreate: m.route.link}, "As Insurance"),
             ]),
             m("section", vnode.children),

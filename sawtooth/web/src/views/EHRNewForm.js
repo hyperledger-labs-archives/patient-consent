@@ -15,7 +15,6 @@ module.exports = {
                 oninput: m.withAttr("value", function(value) {EHR.current.patient_pkey = value}),
                 value: EHR.current.patient_pkey
             }),
-<<<<<<< HEAD
             m("label.label", "ID"),
             m("input.input[placeholder=ID]", {
                 oninput: m.withAttr("value", function(value) {EHR.current.id = value}),
@@ -50,22 +49,6 @@ module.exports = {
             m("input.input[placeholder=RPGT]", {
                 oninput: m.withAttr("value", function(value) {EHR.current.RPGT = value}),
                 value: EHR.current.RPGT
-=======
-            m("label.label", "id"),
-            m("input.input[placeholder=id]", {
-                oninput: m.withAttr("value", function(value) {EHR.current.id = value}),
-                value: EHR.current.id
-            }),
-            m("label.label", "Field 1"),
-            m("input.input[placeholder=Field 1]", {
-                oninput: m.withAttr("value", function(value) {EHR.current.field_1 = value}),
-                value: EHR.current.field_1
-            }),
-            m("label.label", "Field 2"),
-            m("input.input[placeholder=Field 2]", {
-                oninput: m.withAttr("value", function(value) {EHR.current.field_2 = value}),
-                value: EHR.current.field_2
->>>>>>> upstream/master
             }),
             m("button.button[type=submit]", "Register"),
             m("label.error", EHR.error)

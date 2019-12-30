@@ -7,7 +7,6 @@ class ConsentPayload(object):
         self._transaction = consent_payload_pb2.ConsentTransactionPayload()
         self._transaction.ParseFromString(payload)
 
-<<<<<<< HEAD
     # def grant_read_ehr_access(self):
     #     return self._transaction.grant_read_ehr_access
     #
@@ -68,31 +67,6 @@ class ConsentPayload(object):
     def is_request_inform_consent(self):
         return self._transaction.payload_type == \
                consent_payload_pb2.ConsentTransactionPayload.REQUEST_INFORM_CONSENT
-=======
-    def grant_read_ehr_access(self):
-        return self._transaction.grant_read_ehr_access
-
-    def revoke_read_ehr_access(self):
-        return self._transaction.revoke_read_ehr_access
-
-    def is_grant_read_ehr_access(self):
-        return self._transaction.payload_type == consent_payload_pb2.ConsentTransactionPayload.GRANT_READ_EHR_ACCESS
-
-    def is_revoke_read_ehr_access(self):
-        return self._transaction.payload_type == consent_payload_pb2.ConsentTransactionPayload.REVOKE_READ_EHR_ACCESS
-
-    def grant_write_ehr_access(self):
-        return self._transaction.grant_write_ehr_access
-
-    def revoke_write_ehr_access(self):
-        return self._transaction.revoke_write_ehr_access
-
-    def is_grant_write_ehr_access(self):
-        return self._transaction.payload_type == consent_payload_pb2.ConsentTransactionPayload.GRANT_WRITE_EHR_ACCESS
-
-    def is_revoke_write_ehr_access(self):
-        return self._transaction.payload_type == consent_payload_pb2.ConsentTransactionPayload.REVOKE_WRITE_EHR_ACCESS
->>>>>>> upstream/master
 
     def grant_share_ehr_access(self):
         return self._transaction.grant_share_ehr_access

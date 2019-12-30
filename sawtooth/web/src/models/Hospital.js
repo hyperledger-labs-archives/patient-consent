@@ -29,20 +29,12 @@ var Hospital = {
         })
     },
 
-<<<<<<< HEAD
     get_shared_data: function(hospitalPKey, investigatorPKey) {   //i.e Investigator
-=======
-    get_shared_data: function(hospitalPKey, dataProviderPKey) {   //i.e Data Provider
->>>>>>> upstream/master
         return m.request({
             method: "GET",
             url: "/api/hospitals/get_shared_data/" + hospitalPKey,
             headers: {
-<<<<<<< HEAD
                 'ClientKey': investigatorPKey
-=======
-                'ClientKey': dataProviderPKey
->>>>>>> upstream/master
             }
         })
         .then(function(result) {
@@ -57,7 +49,6 @@ var Hospital = {
         })
     },
 
-<<<<<<< HEAD
 //    screening_data: function(hospitalPKey, investigatorPKey, inclExclCriteria) {   //i.e Investigator
 //        return m.request({
 //            method: "GET",
@@ -78,8 +69,6 @@ var Hospital = {
 //        })
 //    },
 
-=======
->>>>>>> upstream/master
     current: {},
 
     register: function() {
@@ -100,17 +89,10 @@ var Hospital = {
         })
     },
 
-<<<<<<< HEAD
     grant_data_processing: function(hospitalPKey, clientKey) {
         return m.request({
             method: "GET",
             url: "/api/patients/grant_data_processing/" + hospitalPKey,
-=======
-    grant_read_ehr: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/grant_read_ehr/" + hospitalPKey,
->>>>>>> upstream/master
             headers: {
                 'ClientKey': clientKey
             }
@@ -128,17 +110,10 @@ var Hospital = {
         })
     },
 
-<<<<<<< HEAD
     revoke_data_processing: function(hospitalPKey, clientKey) {
         return m.request({
             method: "GET",
             url: "/api/patients/revoke_data_processing/" + hospitalPKey,
-=======
-    revoke_read_ehr: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/revoke_read_ehr/" + hospitalPKey,
->>>>>>> upstream/master
             headers: {
                 'ClientKey': clientKey
             }
@@ -154,7 +129,6 @@ var Hospital = {
             console.log(e)
             Hospital.error = e.message
         })
-<<<<<<< HEAD
     }
 //    ,
 
@@ -241,93 +215,6 @@ var Hospital = {
 //            Hospital.error = e.message
 //        })
 //    }
-=======
-    },
-
-    grant_write_ehr: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/grant_write_ehr/" + hospitalPKey,
-            headers: {
-                'ClientKey': clientKey
-            }
-//            data: Doctor.current,
-//            useBody: true,
-//            withCredentials: true,
-        })
-        .then(function(items) {
-//            Data.todos.list = items
-            Hospital.error = ""
-        })
-        .catch(function(e) {
-            console.log(e)
-            Hospital.error = e.message
-        })
-    },
-
-    revoke_write_ehr: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/revoke_write_ehr/" + hospitalPKey,
-            headers: {
-                'ClientKey': clientKey
-            }
-//            data: Doctor.current,
-//            useBody: true,
-//            withCredentials: true,
-        })
-        .then(function(items) {
-//            Data.todos.list = items
-            Hospital.error = ""
-        })
-        .catch(function(e) {
-            console.log(e)
-            Hospital.error = e.message
-        })
-    },
-
-    grant_3rd_party_access: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/grant_share_ehr/" + hospitalPKey,
-            headers: {
-                'ClientKey': clientKey
-            }
-//            data: Doctor.current,
-//            useBody: true,
-//            withCredentials: true,
-        })
-        .then(function(items) {
-//            Data.todos.list = items
-            Hospital.error = ""
-        })
-        .catch(function(e) {
-            console.log(e)
-            Hospital.error = e.message
-        })
-    },
-
-    revoke_3rd_party_access: function(hospitalPKey, clientKey) {
-        return m.request({
-            method: "GET",
-            url: "/api/patients/revoke_share_ehr/" + hospitalPKey,
-            headers: {
-                'ClientKey': clientKey
-            }
-//            data: Doctor.current,
-//            useBody: true,
-//            withCredentials: true,
-        })
-        .then(function(items) {
-//            Data.todos.list = items
-            Hospital.error = ""
-        })
-        .catch(function(e) {
-            console.log(e)
-            Hospital.error = e.message
-        })
-    }
->>>>>>> upstream/master
 }
 
 module.exports = Hospital

@@ -40,7 +40,6 @@ class ConsentTransactionHandler(TransactionHandler):
 
             consent_state = ConsentState(context)
 
-<<<<<<< HEAD
             # if consent_payload.is_revoke_read_ehr_access():
             #     LOGGER.debug("Revoke Read EHR Access")
             #     access = consent_payload.revoke_read_ehr_access()
@@ -79,42 +78,6 @@ class ConsentTransactionHandler(TransactionHandler):
                 consent_state.request_inform_document_consent(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
             elif consent_payload.is_create_client():
                 LOGGER.debug("is_create_client")
-=======
-            if consent_payload.is_revoke_read_ehr_access():
-                LOGGER.debug("Revoke Read EHR Access")
-                access = consent_payload.revoke_read_ehr_access()
-                consent_state.revoke_read_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_grant_read_ehr_access():
-                LOGGER.debug("Grant Read EHR Access")
-                access = consent_payload.grant_read_ehr_access()
-                consent_state.grant_read_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_revoke_write_ehr_access():
-                LOGGER.debug("Revoke Write EHR Access")
-                access = consent_payload.revoke_write_ehr_access()
-                consent_state.revoke_write_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_grant_write_ehr_access():
-                LOGGER.debug("Grant Write EHR Access")
-                access = consent_payload.grant_write_ehr_access()
-                consent_state.grant_write_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_revoke_share_ehr_access():
-                LOGGER.debug("Revoke Share EHR Access")
-                access = consent_payload.revoke_share_ehr_access()
-                consent_state.revoke_share_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_grant_share_ehr_access():
-                LOGGER.debug("Grant Share EHR Access")
-                access = consent_payload.grant_share_ehr_access()
-                consent_state.grant_share_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_revoke_share_shared_ehr_access():
-                LOGGER.debug("Revoke Share Shared EHR Access")
-                access = consent_payload.revoke_share_shared_ehr_access()
-                consent_state.revoke_share_shared_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_grant_share_shared_ehr_access():
-                LOGGER.debug("Grant Share Shared EHR Access")
-                access = consent_payload.grant_share_shared_ehr_access()
-                consent_state.grant_share_shared_ehr_access(dest_pkey=access.dest_pkey, src_pkey=access.src_pkey)
-            elif consent_payload.is_create_client():
-                LOGGER.debug("Create Client")
->>>>>>> upstream/master
                 client = consent_payload.create_client()
                 consent_state.create_client(client)
             else:
