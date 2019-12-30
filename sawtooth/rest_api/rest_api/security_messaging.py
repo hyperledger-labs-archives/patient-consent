@@ -785,7 +785,9 @@ async def get_ehr_by_id(conn, client_key, ehr_id):
                     e.name = pt_local.name
                     e.surname = pt_local.surname
                     ehr_list[claim_address] = e
-        return ehr_list
+        if not ehr_list:
+            raise ApiForbidden("Cat not get EHR having '" + str(ehr_id) + "' id")
+        return ehr_list.values()[0]
     elif Permission(type=Permission.READ_OWN_PATIENT_DATA) in client.permissions:
         # ehr_list_ids_address = ehr_helper.make_ehr_list_by_patient_address(client_key)
         LOGGER.debug('has READ_OWN_PATIENT_DATA permission: ' + str(client_key))
@@ -800,7 +802,9 @@ async def get_ehr_by_id(conn, client_key, ehr_id):
             e = EHRWithUser()
             e.ParseFromString(entity.data)
             ehr_list[entity.address] = e
-        return ehr_list
+        if not ehr_list:
+            raise ApiForbidden("Cat not get EHR having '" + str(ehr_id) + "' id")
+        return ehr_list.values()[0]
     else:
         LOGGER.debug('neither READ_PATIENT_DATA nor READ_OWN_PATIENT_DATA permissions')
     raise ApiForbidden("Insufficient permission")
@@ -974,8 +978,8 @@ async def get_pre_screening_data(conn, investigator_pkey, inc_excl_criteria):
 
 async def import_screening_data(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.IMPORT_DATA) in client.permissions:
-        LOGGER.debug('has IMPORT_DATA permission: True')
+    if Permission(type=Permission.IMPORT_TRIAL_DATA) in client.permissions:
+        LOGGER.debug('has IMPORT_TRIAL_DATA permission: True')
         await _send(conn, timeout, batches)
         return
     else:
@@ -985,8 +989,8 @@ async def import_screening_data(conn, timeout, batches, client_key):
 
 async def update_investigator(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.UPDATE_DATA) in client.permissions:
-        LOGGER.debug('has UPDATE_DATA permission: True')
+    if Permission(type=Permission.UPDATE_TRIAL_DATA) in client.permissions:
+        LOGGER.debug('has UPDATE_TRIAL_DATA permission: True')
         await _send(conn, timeout, batches)
         return
     else:
@@ -996,10 +1000,21 @@ async def update_investigator(conn, timeout, batches, client_key):
 
 async def set_eligible(conn, timeout, batches, client_key):
     client = await get_client(conn, client_key)
-    if Permission(type=Permission.UPDATE_DATA) in client.permissions:
-        LOGGER.debug('has UPDATE_DATA permission: True')
+    if Permission(type=Permission.UPDATE_TRIAL_DATA) in client.permissions:
+        LOGGER.debug('has UPDATE_TRIAL_DATA permission: True')
         await _send(conn, timeout, batches)
         return
     else:
         LOGGER.debug('has permission: False')
     raise ApiForbidden("Insufficient permission")
+
+
+async def has_signed_inform_consent(conn, patient_pkey, investigator_pkey):
+    LOGGER.debug('patient_pkey: ' + str(patient_pkey) + '; investigator_pkey: ' + str(investigator_pkey))
+    signed_inform_consent_list = await get_signed_inform_consent(conn, investigator_pkey)
+    for address, value in signed_inform_consent_list.items():
+        LOGGER.debug('address: ' + str(address) + '; value: ' + str(value))
+        if value.src_pkey == patient_pkey:
+            LOGGER.debug('signed inform consent: True')
+            return True
+    return False

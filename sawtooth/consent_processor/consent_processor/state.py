@@ -166,18 +166,23 @@ class ConsentState(object):
 
     def _store_request_inform_document_consent(self, dest_pkey, src_pkey):
         address = helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+        address_vice_versa = helper.make_request_inform_document_consent_address(dest_pkey=src_pkey, src_pkey=dest_pkey)
+
         access = consent_payload_pb2.ActionOnAccess()
         access.dest_pkey = dest_pkey
         access.src_pkey = src_pkey
 
         state_data = access.SerializeToString()
         self._context.set_state(
-            {address: state_data},
+            {address: state_data,
+             address_vice_versa: state_data},
             timeout=self.TIMEOUT)
 
     def _store_sign_inform_consent(self, dest_pkey, src_pkey):
         request_inform_consent_address = \
             helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+        request_inform_consent_address_vice_versa = \
+            helper.make_request_inform_document_consent_address(dest_pkey=src_pkey, src_pkey=dest_pkey)
         sign_inform_consent_address = \
             helper.make_sign_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
 
@@ -186,7 +191,8 @@ class ConsentState(object):
         sign_inform_consent.src_pkey = src_pkey
 
         self._context.delete_state(
-            [request_inform_consent_address],
+            [request_inform_consent_address,
+             request_inform_consent_address_vice_versa],
             timeout=self.TIMEOUT)
 
         state_data = sign_inform_consent.SerializeToString()
@@ -198,8 +204,16 @@ class ConsentState(object):
         request_inform_consent_address = \
             helper.make_request_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
 
+        request_inform_consent_address_vice_versa = \
+            helper.make_request_inform_document_consent_address(dest_pkey=src_pkey, src_pkey=dest_pkey)
+
+        sign_inform_consent_address = \
+            helper.make_sign_inform_document_consent_address(dest_pkey=dest_pkey, src_pkey=src_pkey)
+
         self._context.delete_state(
-            [request_inform_consent_address],
+            [request_inform_consent_address,
+             request_inform_consent_address_vice_versa,
+             sign_inform_consent_address],
             timeout=self.TIMEOUT)
 
     def _store_data_processing_access(self, dest_pkey, src_pkey):

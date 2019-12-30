@@ -371,7 +371,6 @@ class EHRState(object):
             states,
             timeout=self.TIMEOUT)
 
-
     def _store_import_data(self, signer, data):
         data_address = helper.make_investigator_data_address(data_id=data.id)
         data_investigator_relation_address = helper.make_data_investigator__relation_address(data.id,

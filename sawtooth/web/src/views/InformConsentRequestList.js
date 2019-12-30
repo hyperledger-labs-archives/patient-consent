@@ -37,13 +37,13 @@ module.exports = {
                     m("div"),
                     m("button", {
                         onclick: function() {
-                            Patient.sign_inform_consent(inform_consent.src_pkey, vnode.attrs.client_key)
+                            Patient.sign_inform_consent(inform_consent.dest_pkey, vnode.attrs.client_key)
                         }
                     }, 'Sign Inform Consent'),
                     m("div"),
                     m("button", {
                         onclick: function() {
-                            Patient.decline_inform_consent(inform_consent.src_pkey, vnode.attrs.client_key)
+                            Patient.decline_inform_consent(inform_consent.dest_pkey, vnode.attrs.client_key)
                         }
                     }, 'Decline Inform Consent'),
 //                    m("div"),

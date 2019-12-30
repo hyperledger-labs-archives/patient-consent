@@ -10,7 +10,7 @@ message TrialTransactionPayload {
         CREATE_HOSPITAL = 4;
         CREATE_EHR = 5;
 //        CREATE_DATA_PROVIDER = 6;
-//        IMPORT_DATA = 7;
+        IMPORT_DATA = 6;
 //        UPDATE_DATA = 8;
 //        SET_ELIGIBLE = 9;
 //        NEXT_VISIT = 10;
@@ -29,7 +29,7 @@ message TrialTransactionPayload {
 //    DataProvider create_data_provider = 5;
     Sponsor create_sponsor = 6;
     Investigator create_investigator = 7;
-//    Data import_data = 8;
+    Data import_data = 8;
 //    Data update_data = 9;
 //    Data set_eligible = 10;
 //    Claim create_claim = 5;
@@ -98,13 +98,6 @@ message Data {
     string RPGT=7;
     bool eligible=8;
     string event_time=9;
-}
-
-message Data {
-    string id=1;
-    string field_1=3;
-    string field_2=4;
-    string event_time=5;
 }
 
 message Sponsor { //  Study management

@@ -126,24 +126,26 @@ def create_patient_client(txn_signer, batch_signer):
 
 
 def create_investigator_client(txn_signer, batch_signer):
-    permissions = [Permission(type=Permission.READ_HOSPITAL),
-                   Permission(type=Permission.READ_OWN_INVESTIGATOR),
-                   Permission(type=Permission.REQUEST_INFORM_CONSENT),
-                   Permission(type=Permission.READ_PATIENT_DATA),
-                   Permission(type=Permission.READ_PATIENT)
-                   # Permission(type=Permission.IMPORT_DATA),
-                   # Permission(type=Permission.READ_DATA),
-                   # Permission(type=Permission.UPDATE_DATA),
-                   # Permission(type=Permission.WRITE_FORMATTED_EHR)
-                   ]
+    permissions = [
+        Permission(type=Permission.READ_HOSPITAL),
+        Permission(type=Permission.READ_OWN_INVESTIGATOR),
+        Permission(type=Permission.REQUEST_INFORM_CONSENT),
+        Permission(type=Permission.READ_INFORM_CONSENT_REQUEST),
+        Permission(type=Permission.READ_SIGNED_INFORM_CONSENT),
+        Permission(type=Permission.READ_PATIENT_DATA),
+        Permission(type=Permission.READ_PATIENT),
+        Permission(type=Permission.IMPORT_TRIAL_DATA),
+        Permission(type=Permission.READ_TRIAL_DATA),
+        Permission(type=Permission.UPDATE_TRIAL_DATA)
+    ]
     return create_client(txn_signer, batch_signer, permissions)
 
 
 def create_sponsor_client(txn_signer, batch_signer):
     permissions = [
-                    # Permission(type=Permission.READ_LAB),
-                    # Permission(type=Permission.READ_OWN_LAB),
-                    # Permission(type=Permission.READ_LAB_TEST)
+        # Permission(type=Permission.READ_LAB),
+        # Permission(type=Permission.READ_OWN_LAB),
+        # Permission(type=Permission.READ_LAB_TEST)
     ]
     return create_client(txn_signer, batch_signer, permissions)
 
@@ -265,11 +267,13 @@ def revoke_investigator_access(txn_signer, batch_signer, dest_pkey):
 def request_inform_document_consent(txn_signer, batch_signer, patient_pkey):
     investigator_pkey = txn_signer.get_public_key().as_hex()
     permission_hex = \
+        helper.make_request_inform_document_consent_address(dest_pkey=investigator_pkey, src_pkey=patient_pkey)
+    permission_vice_versa_hex = \
         helper.make_request_inform_document_consent_address(dest_pkey=patient_pkey, src_pkey=investigator_pkey)
 
     access = ActionOnAccess(
-        dest_pkey=patient_pkey,
-        src_pkey=investigator_pkey
+        dest_pkey=investigator_pkey,
+        src_pkey=patient_pkey
     )
 
     payload = ConsentTransactionPayload(
@@ -278,8 +282,8 @@ def request_inform_document_consent(txn_signer, batch_signer, patient_pkey):
 
     return _make_transaction(
         payload=payload,
-        inputs=[permission_hex],
-        outputs=[permission_hex],
+        inputs=[permission_hex, permission_vice_versa_hex],
+        outputs=[permission_hex, permission_vice_versa_hex],
         txn_signer=txn_signer,
         batch_signer=batch_signer)
 
@@ -288,6 +292,9 @@ def sign_inform_document_consent(txn_signer, batch_signer, investigator_pkey):
     patient_pkey = txn_signer.get_public_key().as_hex()
     request_inform_consent_permission_hex = \
         helper.make_request_inform_document_consent_address(dest_pkey=investigator_pkey, src_pkey=patient_pkey)
+
+    request_inform_consent_permission_vice_versa_hex = \
+        helper.make_request_inform_document_consent_address(dest_pkey=patient_pkey, src_pkey=investigator_pkey)
 
     sign_inform_consent_permission_hex = \
         helper.make_sign_inform_document_consent_address(dest_pkey=investigator_pkey, src_pkey=patient_pkey)
@@ -303,15 +310,24 @@ def sign_inform_document_consent(txn_signer, batch_signer, investigator_pkey):
 
     return _make_transaction(
         payload=payload,
-        inputs=[request_inform_consent_permission_hex, sign_inform_consent_permission_hex],
-        outputs=[request_inform_consent_permission_hex, sign_inform_consent_permission_hex],
+        inputs=[request_inform_consent_permission_hex, request_inform_consent_permission_vice_versa_hex,
+                sign_inform_consent_permission_hex],
+        outputs=[request_inform_consent_permission_hex, request_inform_consent_permission_vice_versa_hex,
+                 sign_inform_consent_permission_hex],
         txn_signer=txn_signer,
         batch_signer=batch_signer)
 
 
 def decline_inform_consent(txn_signer, batch_signer, investigator_pkey):
     patient_pkey = txn_signer.get_public_key().as_hex()
-    permission_hex = \
+
+    request_inform_consent_permission_hex = \
+        helper.make_request_inform_document_consent_address(dest_pkey=investigator_pkey, src_pkey=patient_pkey)
+
+    request_inform_consent_permission_vice_versa_hex = \
+        helper.make_request_inform_document_consent_address(dest_pkey=patient_pkey, src_pkey=investigator_pkey)
+
+    sign_inform_consent_permission_hex = \
         helper.make_sign_inform_document_consent_address(dest_pkey=investigator_pkey, src_pkey=patient_pkey)
 
     access = ActionOnAccess(
@@ -325,8 +341,10 @@ def decline_inform_consent(txn_signer, batch_signer, investigator_pkey):
 
     return _make_transaction(
         payload=payload,
-        inputs=[permission_hex],
-        outputs=[permission_hex],
+        inputs=[request_inform_consent_permission_hex, request_inform_consent_permission_vice_versa_hex,
+                sign_inform_consent_permission_hex],
+        outputs=[request_inform_consent_permission_hex, request_inform_consent_permission_vice_versa_hex,
+                 sign_inform_consent_permission_hex],
         txn_signer=txn_signer,
         batch_signer=batch_signer)
 

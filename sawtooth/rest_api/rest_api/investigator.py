@@ -123,35 +123,46 @@ async def register_investigator(request):
 #                          headers=general.get_response_headers())
 
 
-@INVESTIGATORS_BP.get('investigators/import_to_trial_data/<client_key>/<ehr_id>')
-async def import_screening_data(request, client_key, ehr_id):
+@INVESTIGATORS_BP.get('investigators/import_to_trial_data/<patient_pkey>/<ehr_id>')
+async def import_screening_data(request, patient_pkey, ehr_id):
     """Updates auth information for the authorized account"""
-    investigator_key = general.get_request_key_header(request)
-    client_signer = general.get_signer(request, investigator_key)
+    investigator_pkey = general.get_request_key_header(request)
+    client_signer = general.get_signer(request, investigator_pkey)
     # LOGGER.debug('request.json: ' + str(request.json))
     # data_list = request.json
     # data_txns = []
     # for data in data_list:
-    ehr = await security_messaging.get_ehr_by_id(request.app.config.VAL_CONN, client_key, ehr_id)
+
+    has_signed_inform_consent = \
+        await security_messaging.has_signed_inform_consent(
+            request.app.config.VAL_CONN,
+            patient_pkey,
+            investigator_pkey)
+
+    if not has_signed_inform_consent:
+        raise ApiBadRequest("No signed inform consent between patient '" +
+                            patient_pkey + "' and investigator '" + investigator_pkey + "'")
+
+    ehr = await security_messaging.get_ehr_by_id(request.app.config.VAL_CONN, patient_pkey, ehr_id)
 
     data_txn = ehr_transaction.add_data(
             txn_signer=client_signer,
             batch_signer=client_signer,
-            uid=ehr['id'],
-            height=ehr['height'],
-            weight=ehr['weight'],
-            a1c=ehr['A1C'],
-            fpg=ehr['FPG'],
-            ogtt=ehr['OGTT'],
-            rpgt=ehr['RPGT'],
-            event_time=ehr['event_time'])
+            uid=ehr.id,
+            height=ehr.height,
+            weight=ehr.weight,
+            a1c=ehr.A1C,
+            fpg=ehr.FPG,
+            ogtt=ehr.OGTT,
+            rpgt=ehr.RPGT,
+            event_time=ehr.event_time)
 
     batch, batch_id = ehr_transaction.make_batch_and_id([data_txn], client_signer)
 
     await security_messaging.import_screening_data(
         request.app.config.VAL_CONN,
         request.app.config.TIMEOUT,
-        [batch], investigator_key)
+        [batch], investigator_pkey)
 
     try:
         await security_messaging.check_batch_status(

@@ -62,7 +62,9 @@ module.exports = {
                     EHR.screening_data(vnode.attrs.client_key, EHR.current.incl_excl_criteria)
                 }
             }, 'Get Pre-Screening Data (incl. excl. criteria)'),
-            m("label.error", EHR.error)
+            m("label.error", EHR.error),
+            m("div"),
+            m("label.error", Investigator.error)
         )
     }
 }
