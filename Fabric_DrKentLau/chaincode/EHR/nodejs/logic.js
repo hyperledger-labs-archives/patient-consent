@@ -7,6 +7,7 @@ class ehr extends Contract {
 
    async queryRecord(ctx,patientId) {
    
+
     let dataAsBytes = await ctx.stub.getState(patientId); 
     if (!dataAsBytes || dataAsBytes.toString().length <= 0) {
       throw new Error('PATIENT WITH THIS ID DOES NOT EXIST: ');
@@ -14,6 +15,7 @@ class ehr extends Contract {
       let data=JSON.parse(dataAsBytes.toString());
       
       return JSON.stringify(data);
+
      }
 
    async addRecord(ctx,patientId,data1,data2,data3,data4,data5,data6,data7,data8,data9) {
@@ -34,6 +36,7 @@ class ehr extends Contract {
     await ctx.stub.putState(patientId,Buffer.from(JSON.stringify(data))); 
     
     console.log('PATIENT RECORD ADDED TO THE LEDGER SUCCESSFULLY!');
+
     
   }
 
@@ -43,6 +46,7 @@ class ehr extends Contract {
     await ctx.stub.deleteState(patientId); 
     
     console.log('PATIENT RECORD DELETED FROM THE LEDGER SUCCESSFULLY!');
+
     
     }
 }
